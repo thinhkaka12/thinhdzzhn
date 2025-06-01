@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lê Hồng Nhiên 💗💗</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #ff6b9d, #c44569, #f8b500, #ff6b9d);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            animation: floatUp 6s infinite linear;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transform: perspective(1000px) rotateX(15deg);
+            animation: titlePulse 3s ease-in-out infinite;
+            z-index: 10;
+            position: relative;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: perspective(1000px) rotateX(15deg) scale(1); }
+            50% { transform: perspective(1000px) rotateX(15deg) scale(1.05); }
+        }
+        
+        .love-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: perspective(1000px) rotateY(5deg);
+            animation: cardFloat 4s ease-in-out infinite;
+            z-index: 10;
+            position: relative;
+        }
+        
+        @keyframes cardFloat {
+            0%, 100% { 
+                transform: perspective(1000px) rotateY(5deg) translateY(0px);
+            }
+            50% { 
+                transform: perspective(1000px) rotateY(-5deg) translateY(-10px);
+            }
+        }
+        
+        .love-message {
+            color: white;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .highlight {
+            color: #ffeb3b;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        }
+        
+        .rotating-ring {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+            z-index: 5;
+        }
+        
+        .ring-1 {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .ring-2 {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: -5s;
+            width: 200px;
+            height: 200px;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkleAnimation 2s infinite;
+        }
+        
+        @keyframes sparkleAnimation {
+            0%, 100% { 
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% { 
+                transform: scale(1) rotate(180deg);
+                opacity: 1;
+            }
+        }
+        
+        .love-button {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: perspective(1000px) rotateX(10deg);
+        }
+        
+        .love-button:hover {
+            transform: perspective(1000px) rotateX(10deg) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .love-button:active {
+            transform: perspective(1000px) rotateX(10deg) scale(0.95);
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .love-card {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .love-message {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="heartsContainer"></div>
+    
+    <div class="rotating-ring ring-1"></div>
+    <div class="rotating-ring ring-2"></div>
+    
+    <div class="container">
+        <h1 class="main-title">Lê Hồng Nhiên 💗💗</h1>
+        
+        <div class="love-card">
+            <div class="love-message">
+                Gửi đến <span class="highlight">Lê Hồng Nhiên</span> xinh đẹp của anh,<br><br>
+                
+                Em là <span class="highlight">ánh sáng</span> soi đường cho anh mỗi ngày,<br>
+                Là <span class="highlight">niềm vui</span> khiến anh mỉm cười khi thức dậy,<br>
+                Là <span class="highlight">hy vọng</span> giúp anh vượt qua mọi khó khăn.<br><br>
+                
+                Tình yêu anh dành cho em như những <span class="highlight">vì sao</span> trên trời,<br>
+                Vô tận, rực rỡ và <span class="highlight">bất diệt</span>.<br><br>
+                
+                Em sẽ mãi là <span class="highlight">công chúa</span> trong trái tim anh! 👑
+            </div>
+            
+            <button class="love-button" onclick="showLoveMessage()">
+                💖 Nhấn để nhận tình yêu 💖
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Tạo trái tim bay
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = Math.random() > 0.5 ? '💗' : '💖';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            
+            document.getElementById('heartsContainer').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+        
+        // Tạo trái tim mỗi 500ms
+        setInterval(createHeart, 500);
+        
+        // Tạo hiệu ứng lấp lánh
+        function createSparkles() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.left = Math.random() * 100 + '%';
+                    sparkle.style.top = Math.random() * 100 + '%';
+                    sparkle.style.animationDelay = Math.random() * 2 + 's';
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 2000);
+                }, i * 100);
+            }
+        }
+        
+        // Tạo lấp lánh mỗi 3 giây
+        setInterval(createSparkles, 3000);
+        createSparkles();
+        
+        // Hàm hiển thị thông điệp tình yêu
+        function showLoveMessage() {
+            const messages = [
+                "💕 Anh yêu em nhiều lắm! 💕",
+                "🌟 Em là cả thế giới của anh! 🌟",
+                "💖 Mỗi ngày bên em đều là hạnh phúc! 💖",
+                "🌹 Em xinh đẹp nhất thế gian! 🌹",
+                "💫 Tình yêu anh dành cho em là vĩnh cửu! 💫"
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            alert(randomMessage);
+            
+            // Tạo hiệu ứng đặc biệt
+            createHeartExplosion();
+        }
+        
+        // Tạo hiệu ứng nổ trái tim
+        function createHeartExplosion() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '💗';
+                    heart.style.position = 'fixed';
+                    heart.style.left = '50%';
+                    heart.style.top = '50%';
+                    heart.style.fontSize = '30px';
+                    heart.style.pointerEvents = 'none';
+                    heart.style.zIndex = '1000';
+                    
+                    const angle = (i * 24) * Math.PI / 180;
+                    const distance = 100 + Math.random() * 100;
+                    
+                    heart.style.animation = `
+                        heartExplode 2s ease-out forwards
+                    `;
+                    
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 2000);
+                }, i * 50);
+            }
+        }
+        
+        // Thêm CSS animation cho hiệu ứng nổ
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes heartExplode {
+                0% {
+                    transform: translate(-50%, -50%) scale(0);
+                    opacity: 1;
+                }
+                50% {
+                    transform: translate(-50%, -50%) scale(1.5);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translate(-50%, -50%) scale(0.5);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
