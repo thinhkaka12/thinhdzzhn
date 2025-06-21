@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dành tặng em 💖</title>
+    <title>💖</title>
     <style>
         /* --- Cài đặt chung & Font chữ --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,18 +17,6 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* --- Lớp phủ bắt đầu --- */
-        #start-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(252, 231, 243, 0.8); backdrop-filter: blur(10px);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 200; cursor: pointer; color: #4a2c3a; text-align: center;
-            transition: opacity 0.8s ease-out;
-        }
-        #start-overlay.hidden { opacity: 0; pointer-events: none; }
-        .overlay-text { font-size: 2em; font-weight: 600; animation: pulse 2.5s infinite ease-in-out; }
-        .overlay-subtext { margin-top: 15px; font-size: 1.1em; color: #613e4c; }
 
         /* --- Nền Trái Tim Bay --- */
         .hearts-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
@@ -50,13 +38,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- Giao diện câu hỏi --- */
+        /* --- Giao diện chung --- */
         .quiz-container {
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
             padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        .main-title { font-size: 2.2em; color: #4a2c3a; margin-bottom: 20px; font-weight: 700; }
+        .intro-text { font-size: 1.2em; line-height: 1.7; color: #613e4c; }
         .question { font-size: 1.5em; color: #4a2c3a; font-weight: 600; margin-bottom: 30px; }
+        
         .answers { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .answer-btn {
             background: linear-gradient(45deg, #f9a8d4, #f472b6);
@@ -64,13 +55,14 @@
             color: #fff; font-size: 1.1em; font-weight: 600;
             cursor: pointer; transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(244, 114, 182, 0.3);
+            -webkit-tap-highlight-color: transparent; /* Loại bỏ hiệu ứng highlight khi chạm trên mobile */
         }
         .answer-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 20px rgba(244, 114, 182, 0.4); }
-        .answer-btn:disabled { cursor: not-allowed; }
+        .answer-btn:disabled { cursor: not-allowed; opacity: 0.7; }
         
         /* --- Hiệu ứng trả lời --- */
-        .answer-btn.correct { background: linear-gradient(45deg, #4ade80, #22c55e); }
-        .answer-btn.incorrect { background: linear-gradient(45deg, #f87171, #ef4444); animation: shake 0.5s ease; }
+        .answer-btn.correct { background: linear-gradient(45deg, #4ade80, #22c55e) !important; }
+        .answer-btn.incorrect { background: linear-gradient(45deg, #f87171, #ef4444) !important; animation: shake 0.5s ease; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-8px); }
@@ -96,13 +88,6 @@
 </head>
 <body>
     
-    <div id="start-overlay">
-        <div>
-            <div class="overlay-text">Thử thách của Trthinh 💗</div>
-            <p class="overlay-subtext">Cùng xem hai ta nhớ về nhau nhiều thế nào nhé!</p>
-        </div>
-    </div>
-
     <audio id="backgroundMusic" loop>
         <source src="https://files.catbox.moe/8la6n1.mp3" type="audio/mpeg">
         Trình duyệt của bạn không hỗ trợ phát nhạc.
@@ -113,107 +98,117 @@
     <div class="container">
         <div class="step active" id="step0">
              <div class="quiz-container">
-                <h2 style="font-size: 2.2em; color: #4a2c3a; margin-bottom: 20px;">Chào em yêu!</h2>
-                <p style="font-size: 1.2em; line-height: 1.7; color: #613e4c;">Anh đã tạo một bài trắc nghiệm nhỏ để chúng ta cùng nhìn lại những kỷ niệm. Hãy trả lời các câu hỏi để nhận được bất ngờ cuối cùng nhé!</p>
-                <button class="answer-btn" style="margin-top: 30px;" onclick="goToStep(1)">Bắt đầu thôi!</button>
+                <h2 class="main-title">💖 Trắc Nghiệm 💖</h2>
+                <p class="intro-text">Anh đã tạo một bài trắc nghiệm nhỏ để chúng ta cùng nhìn lại những kỷ niệm. Hãy bắt đầu hành trình và nhận bất ngờ cuối cùng nhé!</p>
+                <button class="answer-btn" style="margin-top: 30px;" onclick="initGame()">Bắt đầu hành trình!</button>
             </div>
         </div>
 
-        <div class="step" id="step1">
-            <div class="quiz-container">
-                <div class="progress-bar"><div class="progress-fill" id="progress1"></div></div>
-                <p class="question">Em có nhớ ngày kỷ niệm sự ra đời của "ai đó" không nhỉ? 😉</p>
-                <div class="answers">
-                    <button class="answer-btn" onclick="checkAnswer(this, 1)">25/11/2010</button>
-                    <button class="answer-btn" onclick="checkAnswer(this, 1)">12/05/2010</button>
-                    <button class="answer-btn" data-correct="true" onclick="checkAnswer(this, 1)">25/12/2010</button>
-                </div>
-            </div>
         </div>
-        
-        <div class="step" id="step2">
-             <div class="quiz-container">
-                <div class="progress-bar"><div class="progress-fill" id="progress2" style="width: 20%;"></div></div>
-                <p class="question">Điều anh muốn nghe nhất từ em ngay lúc này là gì? ❤️</p>
-                <div class="answers">
-                    <button class="answer-btn" onclick="checkAnswer(this, 2)">"Ghét anh lắm" (chắc thế) 😂</button>
-                    <button class="answer-btn" data-correct="true" onclick="checkAnswer(this, 2)">Dĩ nhiên là em yêu anh rồi 💖</button>
-                    <button class="answer-btn" onclick="checkAnswer(this, 2)">Để em suy nghĩ đã nhé... 🤔</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="step" id="step3">
-            <div class="quiz-container">
-                <div class="progress-bar"><div class="progress-fill" id="progress3" style="width: 40%;"></div></div>
-                <p class="question">Trái tim em nói rằng, vị trí đặc biệt nhất chỉ dành cho...? </p>
-                <div class="answers">
-                    <button class="answer-btn" data-correct="true" onclick="checkAnswer(this, 3)">Một mình anh thôi đó 🥰</button>
-                    <button class="answer-btn" onclick="checkAnswer(this, 3)">Một "cây ATM" đáng tin cậy 😜</button>
-                    <button class="answer-btn" onclick="checkAnswer(this, 3)">Một người bạn thân</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="step" id="step4">
-            <div class="quiz-container">
-                <div class="progress-bar"><div class="progress-fill" id="progress4" style="width: 60%;"></div></div>
-                <p class="question">Ai là chàng trai may mắn nhất thế gian vì có được em? 😊</p>
-                <div class="answers">
-                    <button class="answer-btn" onclick="checkAnswer(this, 4)">Trần Minh Quân</button>
-                    <button class="answer-btn" data-correct="true" onclick="checkAnswer(this, 4)">Nguyễn Trường Thịnh</button>
-                    <button class="answer-btn" onclick="checkAnswer(this, 4)">Lê Hoàng Long</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="step" id="step5">
-            <div class="quiz-container">
-                <div class="progress-bar"><div class="progress-fill" id="progress5" style="width: 80%;"></div></div>
-                <p class="question">Câu hỏi cuối cùng nè... Cho anh thơm má một cái được không? 😚</p>
-                <div class="answers">
-                    <button class="answer-btn" onclick="checkAnswer(this, 5)">Mơ đi nha! 😜</button>
-                    <button class="answer-btn" onclick="checkAnswer(this, 5)">Để xem thái độ của anh đã... 😏</button>
-                    <button class="answer-btn" data-correct="true" onclick="checkAnswer(this, 5)">Dạ được... chờ em một xíu! 🥰</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="step" id="step6">
-             <div class="quiz-container final-message">
-                </div>
-        </div>
-    </div>
     
     <footer class="footer">© Trường Thịnh</footer>
 
 <script>
-    let currentStep = 0;
+    // --- DỮ LIỆU CÂU HỎI (ANH CÓ THỂ CHỈNH SỬA Ở ĐÂY) ---
+    const questions = [
+        {
+            question: "Em có nhớ ngày kỷ niệm sự ra đời của 'ai đó' không nhỉ? 😉",
+            answers: ["25/11/2010", "12/05/2010", "25/12/2010"],
+            correctAnswer: "25/12/2010"
+        },
+        {
+            question: "Điều anh muốn nghe nhất từ em ngay lúc này là gì? ❤️",
+            answers: ["'Ghét anh lắm' (chắc thế) 😂", "Dĩ nhiên là em yêu anh rồi 💖", "Để em suy nghĩ đã nhé... 🤔"],
+            correctAnswer: "Dĩ nhiên là em yêu anh rồi 💖"
+        },
+        {
+            question: "Trái tim em nói rằng, vị trí đặc biệt nhất chỉ dành cho...?",
+            answers: ["Một mình anh thôi đó 🥰", "Một 'cây ATM' đáng tin cậy 😜", "Một người bạn thân"],
+            correctAnswer: "Một mình anh thôi đó 🥰"
+        },
+        {
+            question: "Ai là chàng trai may mắn nhất thế gian vì có được em? 😊",
+            answers: ["Trần Minh Khôi", "Nguyễn Trường Thịnh", "Lê Hoàng Nhật"],
+            correctAnswer: "Nguyễn Trường Thịnh"
+        },
+        {
+            question: "Câu hỏi cuối cùng nè... Cho anh thơm má một cái được không? 😚",
+            answers: ["Mơ đi nha! 😜", "Để xem thái độ của anh đã... 😏", "Dạ được...🥰"],
+            correctAnswer: "Dạ được...🥰"
+        }
+    ];
+
+    // --- BIẾN TOÀN CỤC ---
+    let currentQuestionIndex = 0;
     let score = 0;
-    const totalQuestions = 5; // Đã cập nhật thành 5 câu hỏi
     let firstTry = true;
     
     const music = document.getElementById('backgroundMusic');
-    const startOverlay = document.getElementById('start-overlay');
+    const container = document.querySelector('.container');
 
-    function goToStep(step) {
-        if(document.getElementById(`step${currentStep}`)) {
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-        }
-        currentStep = step;
-        if(document.getElementById(`step${currentStep}`)) {
-            document.getElementById(`step${currentStep}`).classList.add('active');
-        }
-        firstTry = true;
+    // --- HÀM KHỞI TẠO GAME ---
+    function initGame() {
+        startMusic();
+        createQuestionSteps();
+        // Bắt đầu với câu hỏi đầu tiên (step 1)
+        goToStep(1);
     }
 
-    function checkAnswer(button, questionNum) {
-        const isCorrect = button.dataset.correct === 'true';
-        const answerButtons = button.parentElement.children;
+    function createQuestionSteps() {
+        // Xóa màn hình chào mừng
+        const step0 = document.getElementById('step0');
+        if (step0) step0.remove();
 
-        for (let btn of answerButtons) {
-            btn.disabled = true;
-        }
+        // Tạo các step câu hỏi từ dữ liệu
+        questions.forEach((q, index) => {
+            const stepNum = index + 1;
+            const step = document.createElement('div');
+            step.className = 'step';
+            step.id = `step${stepNum}`;
+
+            let answersHTML = '';
+            // Trộn ngẫu nhiên các câu trả lời để mỗi lần chơi khác nhau
+            const shuffledAnswers = [...q.answers].sort(() => Math.random() - 0.5);
+            
+            shuffledAnswers.forEach(answer => {
+                const isCorrect = answer === q.correctAnswer;
+                answersHTML += `<button class="answer-btn" ${isCorrect ? 'data-correct="true"' : ''} onclick="checkAnswer(this, ${stepNum})">${answer}</button>`;
+            });
+
+            step.innerHTML = `
+                <div class="quiz-container">
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${((stepNum - 1) / questions.length) * 100}%"></div></div>
+                    <p class="question">${q.question}</p>
+                    <div class="answers">${answersHTML}</div>
+                </div>
+            `;
+            container.appendChild(step);
+        });
+
+        // Tạo step kết quả cuối cùng
+        const resultStep = document.createElement('div');
+        resultStep.className = 'step';
+        resultStep.id = `step${questions.length + 1}`;
+        resultStep.innerHTML = `<div class="quiz-container final-message"></div>`;
+        container.appendChild(resultStep);
+    }
+
+    // --- LOGIC GAME ---
+    function goToStep(step) {
+        const activeStep = document.querySelector('.step.active');
+        if (activeStep) activeStep.classList.remove('active');
+        
+        const nextStep = document.getElementById(`step${step}`);
+        if (nextStep) nextStep.classList.add('active');
+        
+        firstTry = true; // Reset lại cho câu hỏi mới
+    }
+
+    function checkAnswer(button, stepNum) {
+        const isCorrect = button.dataset.correct === 'true';
+        const answerButtons = button.parentElement.querySelectorAll('.answer-btn');
+
+        answerButtons.forEach(btn => btn.disabled = true);
 
         if (isCorrect) {
             button.classList.add('correct');
@@ -224,19 +219,21 @@
         } else {
             button.classList.add('incorrect');
             firstTry = false;
-            for (let btn of answerButtons) {
+            answerButtons.forEach(btn => {
                 if (btn.dataset.correct === 'true') {
                     btn.classList.add('correct');
-                    break;
                 }
-            }
+            });
         }
         
-        document.getElementById(`progress${questionNum}`).style.width = (questionNum / totalQuestions) * 100 + '%';
+        const progressBar = document.querySelector(`#step${stepNum} .progress-fill`);
+        if (progressBar) {
+            progressBar.style.width = (stepNum / questions.length) * 100 + '%';
+        }
 
         setTimeout(() => {
-            if (currentStep < totalQuestions) {
-                goToStep(currentStep + 1);
+            if (stepNum < questions.length) {
+                goToStep(stepNum + 1);
             } else {
                 showResults();
             }
@@ -244,40 +241,46 @@
     }
 
     function showResults() {
-        const finalMessageContainer = document.querySelector('#step6 .final-message'); // Sửa thành step6
+        const finalStepIndex = questions.length + 1;
+        const finalMessageContainer = document.querySelector(`#step${finalStepIndex} .final-message`);
         let messageHTML = '';
 
-        if (score === totalQuestions) {
+        if (score === questions.length) {
             messageHTML = `
                 <h2>EM LÀ TUYỆT VỜI NHẤT!</h2>
                 <p>Em trả lời đúng hết rồi! Em không chỉ nhớ mọi thứ về anh mà còn luôn dành cho anh những điều ngọt ngào nhất. Cảm ơn em vì tất cả.</p>
-                <p class="score">Điểm tuyệt đối: ${score}/${totalQuestions}</p>
+                <p class="score">Điểm tuyệt đối: ${score}/${questions.length}</p>
             `;
-        } else if (score >= 3) { // Điều chỉnh ngưỡng điểm
+        } else if (score >= Math.ceil(questions.length * 0.6)) { // Đúng từ 60% trở lên (3/5 câu)
             messageHTML = `
                 <h2>EM NHỚ GẦN HẾT RỒI!</h2>
                 <p>Chúng ta đã có rất nhiều kỷ niệm đẹp bên nhau phải không? Mỗi câu trả lời của em đều khiến anh cảm thấy rất hạnh phúc. Cảm ơn em.</p>
-                <p class="score">Điểm của em: ${score}/${totalQuestions}</p>
+                <p class="score">Điểm của em: ${score}/${questions.length}</p>
             `;
         } else {
             messageHTML = `
                 <h2>KHÔNG SAO CẢ ĐÂU EM!</h2>
                 <p>Điểm số không quan trọng, quan trọng là hiện tại chúng ta vẫn đang cùng nhau tạo nên những kỷ niệm mới tuyệt vời hơn mỗi ngày. Yêu em!</p>
-                <p class="score">Điểm của em: ${score}/${totalQuestions}</p>
+                <p class="score">Điểm của em: ${score}/${questions.length}</p>
             `;
         }
-        finalMessageContainer.innerHTML = messageHTML;
-        goToStep(6); // Sửa thành step6
+        
+        if (finalMessageContainer) {
+            finalMessageContainer.innerHTML = messageHTML;
+        }
+        goToStep(finalStepIndex);
     }
     
-    window.addEventListener('load', () => {
-        createFloatingHearts();
-        startOverlay.addEventListener('click', () => {
-            startOverlay.classList.add('hidden');
-            startMusic();
-        }, { once: true });
-    });
+    // --- HÀM HỖ TRỢ & KHỞI TẠO ---
+    window.addEventListener('load', createFloatingHearts);
 
+    function startMusic() {
+        if (music.paused) {
+            music.volume = 0.8;
+            music.play().catch(e => console.error("Lỗi phát nhạc:", e));
+        }
+    }
+    
     function createFloatingHearts() {
         const heartsContainer = document.getElementById('heartsBackground');
         if(!heartsContainer) return;
@@ -293,12 +296,7 @@
             heartsContainer.appendChild(heart);
         }
     }
-    function startMusic() {
-        if (music.paused) {
-            music.volume = 0.8;
-            music.play().catch(e => console.error("Lỗi phát nhạc:", e));
-        }
-    }
+    
     function playSoundEffect() {
         try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -319,5 +317,3 @@
 
 </body>
 </html>
-
-                    
