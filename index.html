@@ -3,246 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>😈</title>
+    <title>Hành Trình Tình Yêu Của Chúng Ta</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
-        /* --- Cài đặt chung --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* CSS tích hợp - Phiên bản hoàn thiện */
+        :root {
+            --primary-color: #e91e63; /* Màu hồng chủ đạo */
+            --white-color: #ffffff;
+            --text-color: #3f3f3f; /* Màu chữ sẫm hơn một chút cho dễ đọc */
+            --shadow-color: rgba(0, 0, 0, 0.15);
         }
 
         body {
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+
+            /*----- Thiết kế nền -----*/
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #2c3e50, #4ca1af);
-            overflow: hidden;
+            min-height: 100vh;
+            
+            background-image: url('https://files.catbox.moe/rkchx4.jpeg'); /* Ảnh nền chính */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Lớp phủ mờ để làm nổi bật nội dung */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6); /* Lớp phủ màu trắng mờ */
+            backdrop-filter: blur(5px); /* Hiệu ứng làm mờ nền */
+            z-index: 0;
         }
 
         .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px 20px;
+            background-color: rgba(255, 255, 255, 0.85); /* Hộp nội dung hơi trong suốt */
             border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            width: 90%;
-            max-width: 500px;
-        }
-
-        /* --- Các màn hình (Step) --- */
-        .step {
-            display: none;
-        }
-        .step.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
+            box-shadow: 0 10px 35px var(--shadow-color);
+            text-align: center;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 550px;
+            z-index: 1; /* Nằm trên lớp phủ */
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            
+            /* Hiệu ứng xuất hiện */
+            opacity: 0;
+            transform: scale(0.95);
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 0.2s;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         h1 {
-            color: #ffffff;
-            font-size: 2.2rem;
-            margin-bottom: 20px;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 1.8em;
+        }
+        
+        /*----- Ảnh Polaroid trang trí -----*/
+        .polaroid {
+            background-color: var(--white-color);
+            padding: 10px 10px 20px 10px; /* Tạo phần viền trắng dưới dày hơn */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            margin-bottom: 30px;
+            transform: rotate(3deg); /* Đặt nghiêng ảnh một chút */
+            transition: transform 0.3s ease;
+        }
+        
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05); /* Khi di chuột vào ảnh sẽ đứng thẳng và to ra */
+        }
+        
+        .polaroid img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            display: block;
         }
 
-        p {
-            color: #f1f1f1;
-            font-size: 1.2rem;
+        /*----- Bộ đếm thời gian -----*/
+        #countdown {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
             margin-bottom: 30px;
         }
-        
-        /* --- Vỏ bọc các nút đã được căn chỉnh --- */
-        .button-wrapper {
-            position: relative; /* Vùng chứa cho các nút định vị tuyệt đối */
-            height: 60px; /* Chiều cao cố định */
-            margin-top: 20px;
-        }
 
-        /* --- Input --- */
-        .input-field {
-            width: 100%;
-            max-width: 300px;
+        .time-segment {
+            background: linear-gradient(145deg, var(--primary-color), #d81b60);
+            color: var(--white-color);
             padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 50px;
-            border: 2px solid #fff;
-            background-color: transparent;
-            color: #fff;
-            font-size: 1rem;
-            text-align: center;
+            border-radius: 10px;
+            flex-grow: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .input-field::placeholder { color: #ddd; }
-        .input-field:focus { outline: none; border-color: #4ca1af; }
 
-        /* --- Nút bấm chung --- */
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
+        .time-segment span:first-child {
+            font-size: 2.2em;
             font-weight: bold;
-            -webkit-tap-highlight-color: transparent;
-            transition: transform 0.2s ease, top 0.3s ease, left 0.3s ease;
-            position: absolute; /* Tất cả các nút đều định vị tuyệt đối */
-            top: 50%;
-            transform: translateY(-50%); /* Căn giữa theo chiều dọc */
-        }
-        .btn:hover {
-            transform: translateY(-50%) scale(1.05); /* Giữ căn giữa khi phóng to */
-        }
-
-        .btn-yes {
-            background-color: #27ae60;
-            color: white;
-        }
-
-        .btn-no {
-            background-color: #e74c3c;
-            color: white;
+            display: block;
         }
         
-        /* --- Màn hình cuối --- */
-        .final-message img {
-            max-width: 80%;
-            height: auto;
-            border-radius: 15px;
+        .time-segment span:last-child {
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        .since {
+            font-style: italic;
+            color: var(--text-color);
             margin-top: 20px;
-            animation: heartBeat 1.5s infinite;
-            border: 3px solid #fff;
+            font-size: 1.1em;
+            font-weight: 500;
         }
 
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        #start-date {
+            font-weight: bold;
+            color: var(--primary-color);
         }
-        
-        @media (max-width: 768px) {
-            h1 { font-size: 1.8rem; }
-            p { font-size: 1rem; }
-            .btn { padding: 12px 24px; font-size: 1rem; }
-            .button-wrapper { height: 100px; } /* Tăng chiều cao vùng chạy trên mobile */
+
+        /* Responsive cho thiết bị di động */
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .polaroid img {
+                width: 120px;
+                height: 120px;
+            }
+            #countdown {
+                gap: 10px;
+            }
+            .time-segment span:first-child {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
 <body>
 
-    <audio id="backgroundMusic" loop>
-        <source src="https://files.catbox.moe/0yraut.mp3" type="audio/mpeg">
-    </audio>
-
     <div class="container">
-        <div class="step active" id="start-screen">
-            <h1>Một câu hỏi nhỏ...</h1>
-            <p>Nhưng trước tiên, cho anh biết tên em nhé?</p>
-            <input type="text" id="name-input" class="input-field" placeholder="Gõ tên của em vào đây...">
-            <button class="btn btn-yes" style="position: static; transform: none;" onclick="startGame()">Bắt đầu</button>
+        
+        <h1>Hành Trình Tình Yêu</h1>
+        
+        <div class="polaroid">
+            <img src="https://files.catbox.moe/eid82u.jpeg" alt="Ảnh kỷ niệm của hai bạn">
         </div>
 
-        <div class="step" id="question-screen">
-            <h1 id="question-text"></h1>
-            <div class="button-wrapper">
-                <button class="btn btn-yes" id="yes-button" onclick="showFinalMessage()">Có</button>
-                <button class="btn btn-no" id="no-button">Không</button>
+        <div id="countdown">
+            <div class="time-segment">
+                <span id="days">00</span>
+                <span>Ngày</span>
+            </div>
+            <div class="time-segment">
+                <span id="hours">00</span>
+                <span>Giờ</span>
+            </div>
+            <div class="time-segment">
+                <span id="minutes">00</span>
+                <span>Phút</span>
+            </div>
+            <div class="time-segment">
+                <span id="seconds">00</span>
+                <span>Giây</span>
             </div>
         </div>
 
-        <div class="step" id="final-screen">
-            <div class="final-message">
-                <h1>Anh biết mà 🥰</h1>
-                <p>Cảm ơn em đã đồng ý. Yêu em nhiều lắm!</p>
-                <img src="https://files.catbox.moe/azk5q1.jpeg" alt="Ảnh của anh">
-            </div>
-        </div>
+        <p class="since">Bắt đầu từ ngày <span id="start-date"></span></p>
+
     </div>
 
-<script>
-    const startScreen = document.getElementById('start-screen');
-    const questionScreen = document.getElementById('question-screen');
-    const finalScreen = document.getElementById('final-screen');
-    const nameInput = document.getElementById('name-input');
-    const questionText = document.getElementById('question-text');
-    const yesButton = document.getElementById('yes-button');
-    const noButton = document.getElementById('no-button');
-    const music = document.getElementById('backgroundMusic');
-    
-    let userName = '';
+    <script>
+        // NGÀY KỶ NIỆM ĐÃ ĐƯỢC CÀI ĐẶT SẴN
+        // Định dạng: Năm-Tháng-NgàyTGiờ:Phút:Giây
+        const loveStartDate = new Date("2025-01-21T00:00:00"); 
 
-    function startGame() {
-        userName = nameInput.value.trim();
-        if (userName === '') {
-            alert('Em ơi, nhập tên vào đã nhé!');
-            return;
+        const daysElement = document.getElementById("days");
+        const hoursElement = document.getElementById("hours");
+        const minutesElement = document.getElementById("minutes");
+        const secondsElement = document.getElementById("seconds");
+        const startDateElement = document.getElementById("start-date");
+
+        function formatNumber(number) {
+            return number < 10 ? '0' + number : number;
         }
         
-        questionText.innerHTML = `${userName} có đồng ý làm người yêu anh không?`;
-
-        startScreen.classList.remove('active');
-        questionScreen.classList.add('active');
-        
-        // Gọi hàm căn chỉnh vị trí các nút ngay khi bắt đầu
-        positionButtonsInitially();
-    }
-
-    // Hàm căn chỉnh vị trí ban đầu của 2 nút cho cân đối
-    function positionButtonsInitially() {
-        const buttonWrapper = document.querySelector('.button-wrapper');
-        const wrapperRect = buttonWrapper.getBoundingClientRect();
-        
-        // Đặt nút 'Có' ở 1/4 bên trái và nút 'Không' ở 1/4 bên phải
-        yesButton.style.left = `${wrapperRect.width * 0.25 - yesButton.offsetWidth / 2}px`;
-        noButton.style.left = `${wrapperRect.width * 0.75 - noButton.offsetWidth / 2}px`;
-    }
-
-    noButton.addEventListener('mouseover', moveButton);
-    noButton.addEventListener('click', moveButton);
-
-    function moveButton() {
-        const buttonWrapper = document.querySelector('.button-wrapper');
-        const wrapperRect = buttonWrapper.getBoundingClientRect();
-        const buttonRect = noButton.getBoundingClientRect();
-        
-        // Nút "Không" chỉ được phép chạy ở nửa bên phải của vùng chứa để không đè lên nút "Có"
-        const rightHalfStart = wrapperRect.width / 2;
-        const availableWidth = rightHalfStart - buttonRect.width;
-
-        const newTop = Math.random() * (wrapperRect.height - buttonRect.height);
-        // Vị trí bên trái sẽ bắt đầu từ giữa + một khoảng ngẫu nhiên trong nửa còn lại
-        const newLeft = rightHalfStart + (Math.random() * availableWidth);
-
-        noButton.style.top = `${newTop}px`;
-        noButton.style.left = `${newLeft}px`;
-    }
-
-    function showFinalMessage() {
-        if (music.paused) {
-            music.volume = 0.5;
-            music.play().catch(e => console.error("Lỗi phát nhạc:", e));
+        function displayStartDate() {
+            const day = formatNumber(loveStartDate.getDate());
+            const month = formatNumber(loveStartDate.getMonth() + 1);
+            const year = loveStartDate.getFullYear();
+            startDateElement.textContent = `${day}/${month}/${year}`;
         }
 
-        questionScreen.classList.remove('active');
-        finalScreen.classList.add('active');
-    }
+        function updateCountdown() {
+            const now = new Date();
+            const diff = now.getTime() - loveStartDate.getTime();
+            
+            // Nếu ngày bắt đầu là trong tương lai, bộ đếm sẽ hiển thị 0
+            if (diff < 0) {
+                daysElement.textContent = '00';
+                hoursElement.textContent = '00';
+                minutesElement.textContent = '00';
+                secondsElement.textContent = '00';
+                return;
+            }
 
-    // Căn chỉnh lại vị trí nút khi thay đổi kích thước cửa sổ
-    window.addEventListener('resize', () => {
-        if (questionScreen.classList.contains('active')) {
-            positionButtonsInitially();
+            const totalSeconds = Math.floor(diff / 1000);
+            
+            const days = Math.floor(totalSeconds / (3600 * 24));
+            const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            daysElement.textContent = formatNumber(days);
+            hoursElement.textContent = formatNumber(hours);
+            minutesElement.textContent = formatNumber(minutes);
+            secondsElement.textContent = formatNumber(seconds);
         }
-    });
 
-</script>
+        // Chạy các hàm ngay khi tải trang
+        displayStartDate();
+        updateCountdown();
 
+        // Cập nhật bộ đếm mỗi giây
+        setInterval(updateCountdown, 1000);
+    </script>
 </body>
 </html>
+i
