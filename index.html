@@ -3,316 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💖</title>
+    <title>😈</title>
     <style>
-        /* --- Cài đặt chung & Font chữ --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* --- Cài đặt chung --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             display: flex;
-            align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
             overflow: hidden;
-            position: relative;
         }
 
-        /* --- Nền Trái Tim Bay --- */
-        .hearts-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .floating-heart {
-            position: absolute; font-size: 22px; color: rgba(236, 72, 153, 0.5);
-            animation: float 8s infinite ease-in-out;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(180deg); opacity: 0.8; }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 90%;
+            max-width: 500px;
         }
 
-        /* --- Khung chính & Các bước --- */
-        .container { text-align: center; z-index: 10; max-width: 600px; padding: 20px; }
-        .step { display: none; animation: fadeIn 0.8s ease-out; }
-        .step.active { display: block; }
+        /* --- Các màn hình (Step) --- */
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* --- Giao diện chung --- */
-        .quiz-container {
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        h1 {
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
         }
-        .main-title { font-size: 2.2em; color: #4a2c3a; margin-bottom: 20px; font-weight: 700; }
-        .intro-text { font-size: 1.2em; line-height: 1.7; color: #613e4c; }
-        .question { font-size: 1.5em; color: #4a2c3a; font-weight: 600; margin-bottom: 30px; }
+
+        p {
+            color: #f1f1f1;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
         
-        .answers { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .answer-btn {
-            background: linear-gradient(45deg, #f9a8d4, #f472b6);
-            border: none; padding: 18px 25px; border-radius: 50px;
-            color: #fff; font-size: 1.1em; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(244, 114, 182, 0.3);
-            -webkit-tap-highlight-color: transparent; /* Loại bỏ hiệu ứng highlight khi chạm trên mobile */
+        /* --- Vỏ bọc các nút đã được căn chỉnh --- */
+        .button-wrapper {
+            position: relative; /* Vùng chứa cho các nút định vị tuyệt đối */
+            height: 60px; /* Chiều cao cố định */
+            margin-top: 20px;
         }
-        .answer-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 20px rgba(244, 114, 182, 0.4); }
-        .answer-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+
+        /* --- Input --- */
+        .input-field {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 50px;
+            border: 2px solid #fff;
+            background-color: transparent;
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .input-field::placeholder { color: #ddd; }
+        .input-field:focus { outline: none; border-color: #4ca1af; }
+
+        /* --- Nút bấm chung --- */
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.2s ease, top 0.3s ease, left 0.3s ease;
+            position: absolute; /* Tất cả các nút đều định vị tuyệt đối */
+            top: 50%;
+            transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+        }
+        .btn:hover {
+            transform: translateY(-50%) scale(1.05); /* Giữ căn giữa khi phóng to */
+        }
+
+        .btn-yes {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-no {
+            background-color: #e74c3c;
+            color: white;
+        }
         
-        /* --- Hiệu ứng trả lời --- */
-        .answer-btn.correct { background: linear-gradient(45deg, #4ade80, #22c55e) !important; }
-        .answer-btn.incorrect { background: linear-gradient(45deg, #f87171, #ef4444) !important; animation: shake 0.5s ease; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
+        /* --- Màn hình cuối --- */
+        .final-message img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 15px;
+            margin-top: 20px;
+            animation: heartBeat 1.5s infinite;
+            border: 3px solid #fff;
         }
 
-        /* --- Thanh tiến trình --- */
-        .progress-bar { width: 100%; height: 10px; background: rgba(0, 0, 0, 0.05); border-radius: 10px; margin: 25px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #a78bfa, #8b5cf6); width: 0%; transition: width 0.8s ease-out; border-radius: 10px; }
-
-        /* --- Màn hình kết quả --- */
-        .final-message { font-size: 1.2em; line-height: 1.7; color: #4a2c3a;}
-        .final-message h2 { font-size: 2em; margin-bottom: 15px; color: #8b5cf6; }
-        .final-message p { margin-bottom: 20px; }
-        .score { font-size: 1.3em; font-weight: bold; }
-
-        /* --- Copyright --- */
-        .footer { position: fixed; bottom: 15px; font-size: 0.85em; color: #8c7a82; z-index: 100; }
-
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        @media (max-width: 768px) { .question { font-size: 1.3em; } .answer-btn { font-size: 1em; padding: 15px 20px; } }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            p { font-size: 1rem; }
+            .btn { padding: 12px 24px; font-size: 1rem; }
+            .button-wrapper { height: 100px; } /* Tăng chiều cao vùng chạy trên mobile */
+        }
     </style>
 </head>
 <body>
-    
+
     <audio id="backgroundMusic" loop>
-        <source src="https://files.catbox.moe/8la6n1.mp3" type="audio/mpeg">
-        Trình duyệt của bạn không hỗ trợ phát nhạc.
+        <source src="https://files.catbox.moe/0yraut.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="hearts-bg" id="heartsBackground"></div>
-
     <div class="container">
-        <div class="step active" id="step0">
-             <div class="quiz-container">
-                <h2 class="main-title">💖 Trắc Nghiệm 💖</h2>
-                <p class="intro-text">Anh đã tạo một bài trắc nghiệm nhỏ để chúng ta cùng nhìn lại những kỷ niệm. Hãy bắt đầu hành trình và nhận bất ngờ cuối cùng nhé!</p>
-                <button class="answer-btn" style="margin-top: 30px;" onclick="initGame()">Bắt đầu hành trình!</button>
+        <div class="step active" id="start-screen">
+            <h1>Một câu hỏi nhỏ...</h1>
+            <p>Nhưng trước tiên, cho anh biết tên em nhé?</p>
+            <input type="text" id="name-input" class="input-field" placeholder="Gõ tên của em vào đây...">
+            <button class="btn btn-yes" style="position: static; transform: none;" onclick="startGame()">Bắt đầu</button>
+        </div>
+
+        <div class="step" id="question-screen">
+            <h1 id="question-text"></h1>
+            <div class="button-wrapper">
+                <button class="btn btn-yes" id="yes-button" onclick="showFinalMessage()">Có</button>
+                <button class="btn btn-no" id="no-button">Không</button>
             </div>
         </div>
 
+        <div class="step" id="final-screen">
+            <div class="final-message">
+                <h1>Anh biết mà 🥰</h1>
+                <p>Cảm ơn em đã đồng ý. Yêu em nhiều lắm!</p>
+                <img src="https://files.catbox.moe/azk5q1.jpeg" alt="Ảnh của anh">
+            </div>
         </div>
-    
-    <footer class="footer">© Trường Thịnh</footer>
+    </div>
 
 <script>
-    // --- DỮ LIỆU CÂU HỎI (ANH CÓ THỂ CHỈNH SỬA Ở ĐÂY) ---
-    const questions = [
-        {
-            question: "Em có nhớ ngày kỷ niệm sự ra đời của 'ai đó' không nhỉ? 😉",
-            answers: ["25/11/2010", "12/05/2010", "25/12/2010"],
-            correctAnswer: "25/12/2010"
-        },
-        {
-            question: "Điều anh muốn nghe nhất từ em ngay lúc này là gì? ❤️",
-            answers: ["'Ghét anh lắm' (chắc thế) 😂", "Dĩ nhiên là em yêu anh rồi 💖", "Để em suy nghĩ đã nhé... 🤔"],
-            correctAnswer: "Dĩ nhiên là em yêu anh rồi 💖"
-        },
-        {
-            question: "Trái tim em nói rằng, vị trí đặc biệt nhất chỉ dành cho...?",
-            answers: ["Một mình anh thôi đó 🥰", "Một 'cây ATM' đáng tin cậy 😜", "Một người bạn thân"],
-            correctAnswer: "Một mình anh thôi đó 🥰"
-        },
-        {
-            question: "Ai là chàng trai may mắn nhất thế gian vì có được em? 😊",
-            answers: ["Trần Minh Khôi", "Nguyễn Trường Thịnh", "Lê Hoàng Nhật"],
-            correctAnswer: "Nguyễn Trường Thịnh"
-        },
-        {
-            question: "Câu hỏi cuối cùng nè... Cho anh thơm má một cái được không? 😚",
-            answers: ["Mơ đi nha! 😜", "Để xem thái độ của anh đã... 😏", "Dạ được...🥰"],
-            correctAnswer: "Dạ được...🥰"
-        }
-    ];
-
-    // --- BIẾN TOÀN CỤC ---
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let firstTry = true;
-    
+    const startScreen = document.getElementById('start-screen');
+    const questionScreen = document.getElementById('question-screen');
+    const finalScreen = document.getElementById('final-screen');
+    const nameInput = document.getElementById('name-input');
+    const questionText = document.getElementById('question-text');
+    const yesButton = document.getElementById('yes-button');
+    const noButton = document.getElementById('no-button');
     const music = document.getElementById('backgroundMusic');
-    const container = document.querySelector('.container');
-
-    // --- HÀM KHỞI TẠO GAME ---
-    function initGame() {
-        startMusic();
-        createQuestionSteps();
-        // Bắt đầu với câu hỏi đầu tiên (step 1)
-        goToStep(1);
-    }
-
-    function createQuestionSteps() {
-        // Xóa màn hình chào mừng
-        const step0 = document.getElementById('step0');
-        if (step0) step0.remove();
-
-        // Tạo các step câu hỏi từ dữ liệu
-        questions.forEach((q, index) => {
-            const stepNum = index + 1;
-            const step = document.createElement('div');
-            step.className = 'step';
-            step.id = `step${stepNum}`;
-
-            let answersHTML = '';
-            // Trộn ngẫu nhiên các câu trả lời để mỗi lần chơi khác nhau
-            const shuffledAnswers = [...q.answers].sort(() => Math.random() - 0.5);
-            
-            shuffledAnswers.forEach(answer => {
-                const isCorrect = answer === q.correctAnswer;
-                answersHTML += `<button class="answer-btn" ${isCorrect ? 'data-correct="true"' : ''} onclick="checkAnswer(this, ${stepNum})">${answer}</button>`;
-            });
-
-            step.innerHTML = `
-                <div class="quiz-container">
-                    <div class="progress-bar"><div class="progress-fill" style="width: ${((stepNum - 1) / questions.length) * 100}%"></div></div>
-                    <p class="question">${q.question}</p>
-                    <div class="answers">${answersHTML}</div>
-                </div>
-            `;
-            container.appendChild(step);
-        });
-
-        // Tạo step kết quả cuối cùng
-        const resultStep = document.createElement('div');
-        resultStep.className = 'step';
-        resultStep.id = `step${questions.length + 1}`;
-        resultStep.innerHTML = `<div class="quiz-container final-message"></div>`;
-        container.appendChild(resultStep);
-    }
-
-    // --- LOGIC GAME ---
-    function goToStep(step) {
-        const activeStep = document.querySelector('.step.active');
-        if (activeStep) activeStep.classList.remove('active');
-        
-        const nextStep = document.getElementById(`step${step}`);
-        if (nextStep) nextStep.classList.add('active');
-        
-        firstTry = true; // Reset lại cho câu hỏi mới
-    }
-
-    function checkAnswer(button, stepNum) {
-        const isCorrect = button.dataset.correct === 'true';
-        const answerButtons = button.parentElement.querySelectorAll('.answer-btn');
-
-        answerButtons.forEach(btn => btn.disabled = true);
-
-        if (isCorrect) {
-            button.classList.add('correct');
-            playSoundEffect();
-            if (firstTry) {
-                score++;
-            }
-        } else {
-            button.classList.add('incorrect');
-            firstTry = false;
-            answerButtons.forEach(btn => {
-                if (btn.dataset.correct === 'true') {
-                    btn.classList.add('correct');
-                }
-            });
-        }
-        
-        const progressBar = document.querySelector(`#step${stepNum} .progress-fill`);
-        if (progressBar) {
-            progressBar.style.width = (stepNum / questions.length) * 100 + '%';
-        }
-
-        setTimeout(() => {
-            if (stepNum < questions.length) {
-                goToStep(stepNum + 1);
-            } else {
-                showResults();
-            }
-        }, 2000);
-    }
-
-    function showResults() {
-        const finalStepIndex = questions.length + 1;
-        const finalMessageContainer = document.querySelector(`#step${finalStepIndex} .final-message`);
-        let messageHTML = '';
-
-        if (score === questions.length) {
-            messageHTML = `
-                <h2>EM LÀ TUYỆT VỜI NHẤT!</h2>
-                <p>Em trả lời đúng hết rồi! Em không chỉ nhớ mọi thứ về anh mà còn luôn dành cho anh những điều ngọt ngào nhất. Cảm ơn em vì tất cả.</p>
-                <p class="score">Điểm tuyệt đối: ${score}/${questions.length}</p>
-            `;
-        } else if (score >= Math.ceil(questions.length * 0.6)) { // Đúng từ 60% trở lên (3/5 câu)
-            messageHTML = `
-                <h2>EM NHỚ GẦN HẾT RỒI!</h2>
-                <p>Chúng ta đã có rất nhiều kỷ niệm đẹp bên nhau phải không? Mỗi câu trả lời của em đều khiến anh cảm thấy rất hạnh phúc. Cảm ơn em.</p>
-                <p class="score">Điểm của em: ${score}/${questions.length}</p>
-            `;
-        } else {
-            messageHTML = `
-                <h2>KHÔNG SAO CẢ ĐÂU EM!</h2>
-                <p>Điểm số không quan trọng, quan trọng là hiện tại chúng ta vẫn đang cùng nhau tạo nên những kỷ niệm mới tuyệt vời hơn mỗi ngày. Yêu em!</p>
-                <p class="score">Điểm của em: ${score}/${questions.length}</p>
-            `;
-        }
-        
-        if (finalMessageContainer) {
-            finalMessageContainer.innerHTML = messageHTML;
-        }
-        goToStep(finalStepIndex);
-    }
     
-    // --- HÀM HỖ TRỢ & KHỞI TẠO ---
-    window.addEventListener('load', createFloatingHearts);
+    let userName = '';
 
-    function startMusic() {
+    function startGame() {
+        userName = nameInput.value.trim();
+        if (userName === '') {
+            alert('Em ơi, nhập tên vào đã nhé!');
+            return;
+        }
+        
+        questionText.innerHTML = `${userName} có đồng ý làm người yêu anh không?`;
+
+        startScreen.classList.remove('active');
+        questionScreen.classList.add('active');
+        
+        // Gọi hàm căn chỉnh vị trí các nút ngay khi bắt đầu
+        positionButtonsInitially();
+    }
+
+    // Hàm căn chỉnh vị trí ban đầu của 2 nút cho cân đối
+    function positionButtonsInitially() {
+        const buttonWrapper = document.querySelector('.button-wrapper');
+        const wrapperRect = buttonWrapper.getBoundingClientRect();
+        
+        // Đặt nút 'Có' ở 1/4 bên trái và nút 'Không' ở 1/4 bên phải
+        yesButton.style.left = `${wrapperRect.width * 0.25 - yesButton.offsetWidth / 2}px`;
+        noButton.style.left = `${wrapperRect.width * 0.75 - noButton.offsetWidth / 2}px`;
+    }
+
+    noButton.addEventListener('mouseover', moveButton);
+    noButton.addEventListener('click', moveButton);
+
+    function moveButton() {
+        const buttonWrapper = document.querySelector('.button-wrapper');
+        const wrapperRect = buttonWrapper.getBoundingClientRect();
+        const buttonRect = noButton.getBoundingClientRect();
+        
+        // Nút "Không" chỉ được phép chạy ở nửa bên phải của vùng chứa để không đè lên nút "Có"
+        const rightHalfStart = wrapperRect.width / 2;
+        const availableWidth = rightHalfStart - buttonRect.width;
+
+        const newTop = Math.random() * (wrapperRect.height - buttonRect.height);
+        // Vị trí bên trái sẽ bắt đầu từ giữa + một khoảng ngẫu nhiên trong nửa còn lại
+        const newLeft = rightHalfStart + (Math.random() * availableWidth);
+
+        noButton.style.top = `${newTop}px`;
+        noButton.style.left = `${newLeft}px`;
+    }
+
+    function showFinalMessage() {
         if (music.paused) {
-            music.volume = 0.8;
+            music.volume = 0.5;
             music.play().catch(e => console.error("Lỗi phát nhạc:", e));
         }
+
+        questionScreen.classList.remove('active');
+        finalScreen.classList.add('active');
     }
-    
-    function createFloatingHearts() {
-        const heartsContainer = document.getElementById('heartsBackground');
-        if(!heartsContainer) return;
-        heartsContainer.innerHTML = '';
-        const heartSymbols = ['💕', '💖', '💗', '❤️', '💝'];
-        for (let i = 0; i < 20; i++) {
-            const heart = document.createElement('div');
-            heart.className = 'floating-heart';
-            heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDelay = Math.random() * 8 + 's';
-            heart.style.animationDuration = (Math.random() * 5 + 7) + 's';
-            heartsContainer.appendChild(heart);
+
+    // Căn chỉnh lại vị trí nút khi thay đổi kích thước cửa sổ
+    window.addEventListener('resize', () => {
+        if (questionScreen.classList.contains('active')) {
+            positionButtonsInitially();
         }
-    }
-    
-    function playSoundEffect() {
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.2);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.2);
-        } catch (e) { console.log('Audio Context không được hỗ trợ.'); }
-    }
+    });
+
 </script>
 
 </body>
