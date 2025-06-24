@@ -119,7 +119,6 @@
             color: var(--primary-color);
         }
         
-        /* -- BỐ CỤC MỚI CHO NĂM-THÁNG-NGÀY -- */
         .detailed-counter {
             display: flex;
             justify-content: space-around;
@@ -146,8 +145,7 @@
             color: rgba(255, 255, 255, 0.7);
             margin-top: 4px;
         }
-        /* -- KẾT THÚC BỐ CỤC MỚI -- */
-
+        
         .fixed-controls {
             position: fixed;
             top: 15px;
@@ -317,7 +315,7 @@
             font-size: 14px;
         }
 
-        /* Chat Modal Styles */
+        /* --- SỔ LƯU BÚT (CHAT) STYLES --- */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -325,41 +323,59 @@
             max-height: 500px;
         }
 
+        .name-input-container {
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        #name-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 15px;
+        }
+
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            padding: 0 5px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .message {
-            max-width: 70%;
+            width: 100%;
+            max-width: 100%;
             padding: 10px 15px;
             border-radius: 18px;
             font-size: 15px;
             line-height: 1.4;
-        }
-
-        .message.sent {
-            background: var(--primary-color);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.received {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            align-self: flex-start;
+            align-self: flex-start; /* All messages aligned left */
             border-bottom-left-radius: 4px;
+            display: flex;
+            flex-direction: column;
         }
 
+        .message-sender {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
         .chat-input-container {
             display: flex;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
+            padding-top: 10px;
+            background: transparent;
             border-top: 1px solid var(--border-color);
         }
 
@@ -384,6 +400,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         @media (max-width: 400px) {
@@ -392,8 +409,8 @@
             }
         }
     </style>
-    </head>
-    <body>
+</head>
+<body>
     <audio id="background-music" loop src="https://files.catbox.moe/sekfb8.aac"></audio>
 
     <div class="fixed-controls">
@@ -406,7 +423,7 @@
         <h1 id="main-title">Hành Trình Yêu Thương</h1>
         <div class="date-input-container">
             <label id="date-label" for="date-input">Ngày bắt đầu kỷ niệm</label>
-            <input type="date" id="date-input" value="2024-01-20">
+            <input type="date" id="date-input" value="2025-01-20">
         </div>
         <div class="counter-stack">
             <div class="counter-line">
@@ -456,11 +473,14 @@
 
     <div id="chat-modal-overlay" class="overlay">
         <div class="modal-content">
-            <h2>Trò chuyện</h2>
+            <h2>Sổ Lưu Bút</h2>
             <div class="chat-container">
+                <div class="name-input-container">
+                    <input type="text" id="name-input" placeholder="Nhập tên của bạn...">
+                </div>
                 <div class="chat-messages" id="chat-messages"></div>
                 <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Nhắn tin...">
+                    <input type="text" id="chat-input" placeholder="Để lại lời nhắn...">
                     <button id="send-message-btn">➤</button>
                 </div>
             </div>
@@ -493,12 +513,9 @@
         const dateLabel = document.getElementById('date-label');
         const counterLabel = document.getElementById('counter-label');
         const totalDaysVal = document.getElementById('total-days-val');
-        
-        // Elements for the new detailed counter
         const yearsVal = document.getElementById('years-val');
         const monthsVal = document.getElementById('months-val');
         const daysVal = document.getElementById('days-val');
-        
         const backgroundMusic = document.getElementById('background-music');
         const photosMenuBtn = document.getElementById('photos-menu-btn');
         const chatMenuBtn = document.getElementById('chat-menu-btn');
@@ -509,6 +526,9 @@
         const chatModalOverlay = document.getElementById('chat-modal-overlay');
         const thumbnailContainer = document.querySelector('.theme-thumbnails');
         const musicToggleBtn = document.getElementById('music-toggle-btn');
+        
+        // Guestbook (Chat) Elements
+        const nameInput = document.getElementById('name-input');
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const sendMessageBtn = document.getElementById('send-message-btn');
@@ -523,23 +543,25 @@
         let startX, startY, deltaX, deltaY;
         let activeBgUrl = userImages[0];
         
-        // --- User Identification & Public Chat ---
-        let userId = localStorage.getItem('loveAppUserId');
-        if (!userId) {
-            userId = 'user_' + new Date().getTime() + Math.random();
-            localStorage.setItem('loveAppUserId', userId);
-        }
-        
-        const chatRoomId = 'public_chat'; // Everyone joins this single public room
+        // --- Public Guestbook Chat ---
+        const chatRoomId = 'public_guestbook'; // Everyone joins this single public room
 
         // --- Initialize ---
         function initialize() {
+            loadUserName();
             changeBackground(activeBgUrl);
             createImageSwitcherCards();
             createSettingsThumbnails();
             calculateAndDisplay(true);
             setupEventListeners();
             listenForMessages();
+        }
+
+        function loadUserName() {
+            const savedName = localStorage.getItem('guestbookUserName');
+            if (savedName) {
+                nameInput.value = savedName;
+            }
         }
 
         function changeBackground(imageUrl) {
@@ -550,6 +572,145 @@
             updateActiveThumbnail();
         }
 
+        // --- Counter Logic & Animation ---
+        function calculateAndDisplay(isInitialLoad = false) {
+            const startDate = new Date(dateInput.value);
+            if (isNaN(startDate.getTime())) return;
+            const today = new Date();
+            const isFuture = today < startDate;
+            mainTitle.textContent = isFuture ? 'Đếm Ngược Sự Kiện' : 'Hành Trình Yêu Thương';
+            dateLabel.textContent = isFuture ? 'Ngày diễn ra sự kiện' : 'Ngày bắt đầu kỷ niệm';
+            counterLabel.textContent = isFuture ? 'Còn lại' : 'Đã bên nhau';
+            const start = isFuture ? today : startDate;
+            const end = isFuture ? startDate : today;
+            const diffTime = Math.abs(end - start);
+            const totalDiffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            let tempStartDate = new Date(start);
+            let years = end.getFullYear() - tempStartDate.getFullYear();
+            let months = end.getMonth() - tempStartDate.getMonth();
+            let days = end.getDate() - tempStartDate.getDate();
+            if (days < 0) {
+                months--;
+                const lastMonthOfEnd = new Date(end.getFullYear(), end.getMonth(), 0);
+                days += lastMonthOfEnd.getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            if (isInitialLoad) {
+                animateValue(totalDaysVal, 0, totalDiffDays, 1200, '<span class="unit"> ngày</span>');
+                animateValue(yearsVal, 0, years, 1200);
+                animateValue(monthsVal, 0, months, 1200);
+                animateValue(daysVal, 0, days, 1200);
+            } else {
+                totalDaysVal.innerHTML = totalDiffDays.toLocaleString('vi-VN') + '<span class="unit"> ngày</span>';
+                yearsVal.textContent = years.toLocaleString('vi-VN');
+                monthsVal.textContent = months.toLocaleString('vi-VN');
+                daysVal.textContent = days.toLocaleString('vi-VN');
+            }
+        }
+
+        function animateValue(element, start, end, duration, suffix = '') {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentValue = Math.floor(progress * (end - start) + start);
+                element.innerHTML = currentValue.toLocaleString('vi-VN') + suffix;
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // --- Guestbook (Chat) Logic ---
+        function sendMessage() {
+            const name = nameInput.value.trim();
+            const text = chatInput.value.trim();
+
+            if (!name) {
+                alert('Vui lòng nhập tên của bạn!');
+                nameInput.focus();
+                return;
+            }
+            if (!text) return;
+
+            localStorage.setItem('guestbookUserName', name); // Save name
+
+            const message = {
+                name: name,
+                text: text,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            const chatRef = database.ref(`chats/${chatRoomId}`);
+            chatRef.push(message);
+            chatInput.value = '';
+        }
+
+        function renderMessage(msg) {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message'; // All messages have the same style
+
+            const senderEl = document.createElement('div');
+            senderEl.className = 'message-sender';
+            senderEl.textContent = msg.name;
+
+            const textEl = document.createElement('div');
+            textEl.className = 'message-text';
+            textEl.textContent = msg.text;
+
+            messageEl.appendChild(senderEl);
+            messageEl.appendChild(textEl);
+            chatMessages.appendChild(messageEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function listenForMessages() {
+            const chatRef = database.ref(`chats/${chatRoomId}`);
+            chatMessages.innerHTML = '';
+            chatRef.on('child_added', snapshot => {
+                const msg = snapshot.val();
+                if(msg) {
+                    renderMessage(msg);
+                }
+            });
+        }
+
+        // --- Event Listeners & Other UI Functions ---
+        function setupEventListeners() {
+            dateInput.addEventListener('change', () => calculateAndDisplay(false));
+            photosMenuBtn.addEventListener('click', () => { imageSwitcherOverlay.classList.add('active'); updateCards(true); });
+            chatMenuBtn.addEventListener('click', () => { chatModalOverlay.classList.add('active'); chatMessages.scrollTop = chatMessages.scrollHeight; });
+            toolsMenuBtn.addEventListener('click', () => { settingsModalOverlay.classList.add('active'); updateActiveThumbnail(); });
+            [imageSwitcherOverlay, settingsModalOverlay, chatModalOverlay].forEach(overlay => {
+                overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
+            });
+            cardContainer.addEventListener('mousedown', onDragStart);
+            cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
+            window.addEventListener('mousemove', onDragMove);
+            window.addEventListener('touchmove', onDragMove, { passive: false });
+            window.addEventListener('mouseup', onDragEnd);
+            window.addEventListener('touchend', onDragEnd);
+            musicToggleBtn.addEventListener('click', () => {
+                if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.log("Playback prevented.", e)); } 
+                else { backgroundMusic.pause(); }
+            });
+            backgroundMusic.onplay = () => { musicToggleBtn.textContent = 'Tắt nhạc'; };
+            backgroundMusic.onpause = () => { musicToggleBtn.textContent = 'Bật nhạc'; };
+            document.getElementById('copy-link-btn').addEventListener('click', () => {
+                const mainUrl = window.location.origin + window.location.pathname;
+                navigator.clipboard.writeText(mainUrl).then(() => {
+                    const feedback = document.getElementById('copy-feedback');
+                    feedback.style.opacity = '1';
+                    setTimeout(() => { feedback.style.opacity = '0'; }, 2000);
+                }).catch(() => alert('Không thể sao chép liên kết!'));
+            });
+            sendMessageBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+        }
+        
+        // --- Functions below are for UI components that don't need frequent changes ---
         function createSettingsThumbnails() {
             thumbnailContainer.innerHTML = '';
             userImages.forEach(url => {
@@ -571,70 +732,6 @@
                 thumb.classList.toggle('active', thumb.dataset.url === activeBgUrl);
             });
         }
-        
-        function animateValue(element, start, end, duration, suffix = '') {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const currentValue = Math.floor(progress * (end - start) + start);
-                element.innerHTML = currentValue.toLocaleString('vi-VN') + suffix;
-                if (progress < 1) window.requestAnimationFrame(step);
-            };
-            window.requestAnimationFrame(step);
-        }
-        
-        // --- UPDATED Counter Logic & Animation ---
-        function calculateAndDisplay(isInitialLoad = false) {
-            const startDate = new Date(dateInput.value);
-            if (isNaN(startDate.getTime())) return;
-
-            const today = new Date();
-            const isFuture = today < startDate;
-
-            // Update titles and labels
-            mainTitle.textContent = isFuture ? 'Đếm Ngược Sự Kiện' : 'Hành Trình Yêu Thương';
-            dateLabel.textContent = isFuture ? 'Ngày diễn ra sự kiện' : 'Ngày bắt đầu kỷ niệm';
-            counterLabel.textContent = isFuture ? 'Còn lại' : 'Đã bên nhau';
-
-            const start = isFuture ? today : startDate;
-            const end = isFuture ? startDate : today;
-
-            // Calculate total days
-            const diffTime = Math.abs(end - start);
-            const totalDiffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            // Calculate years, months, days
-            let tempStartDate = new Date(start);
-            let years = end.getFullYear() - tempStartDate.getFullYear();
-            let months = end.getMonth() - tempStartDate.getMonth();
-            let days = end.getDate() - tempStartDate.getDate();
-
-            if (days < 0) {
-                months--;
-                // Get days in the previous month of the end date
-                const lastMonthOfEnd = new Date(end.getFullYear(), end.getMonth(), 0);
-                days += lastMonthOfEnd.getDate();
-            }
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
-
-            // Update DOM
-            if (isInitialLoad) {
-                animateValue(totalDaysVal, 0, totalDiffDays, 1200, '<span class="unit"> ngày</span>');
-                animateValue(yearsVal, 0, years, 1200);
-                animateValue(monthsVal, 0, months, 1200);
-                animateValue(daysVal, 0, days, 1200);
-            } else {
-                totalDaysVal.innerHTML = totalDiffDays.toLocaleString('vi-VN') + '<span class="unit"> ngày</span>';
-                yearsVal.textContent = years.toLocaleString('vi-VN');
-                monthsVal.textContent = months.toLocaleString('vi-VN');
-                daysVal.textContent = days.toLocaleString('vi-VN');
-            }
-        }
-        
         function createImageSwitcherCards() {
             cardContainer.innerHTML = '';
             userImages.forEach((url, index) => {
@@ -645,7 +742,6 @@
                 cardContainer.appendChild(card);
             });
         }
-        
         function updateCards(isInstant = false) {
             const cards = document.querySelectorAll('.switcher-card');
             cards.forEach((card, i) => {
@@ -655,157 +751,21 @@
                 let tx = isDragging ? deltaX : 0;
                 let ty = isDragging ? deltaY : 0;
                 const transform = `translateX(calc(${offset * 60}% + ${tx}px)) scale(${1 - absOffset * 0.1}) rotateY(${direction * -15}deg) translateZ(${-absOffset * 80}px) translateY(${ty}px)`;
-
                 if (isInstant) card.classList.add('is-dragging');
                 card.style.transform = transform;
                 card.style.opacity = absOffset > 2 ? '0' : '1';
                 card.style.zIndex = userImages.length - absOffset;
-                if (isInstant) card.offsetHeight; // Force reflow
+                if (isInstant) card.offsetHeight;
                 if (isInstant) card.classList.remove('is-dragging');
             });
         }
-
-        function onDragStart(e) {
-            if (e.target.closest('button')) return;
-            e.preventDefault();
-            isDragging = true;
-            startX = e.pageX || e.touches[0].pageX;
-            startY = e.pageY || e.touches[0].pageY;
-            deltaX = 0;
-            deltaY = 0;
-            cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.add('is-dragging'));
-        }
-
-        function onDragMove(e) {
-            if (!isDragging) return;
-            const currentX = e.pageX || e.touches[0].pageX;
-            const currentY = e.pageY || e.touches[0].pageY;
-            deltaX = currentX - startX;
-            deltaY = currentY - startY;
-            updateCards();
-        }
-
-        function onDragEnd() {
-            if (!isDragging) return;
-            isDragging = false;
-            cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.remove('is-dragging'));
-
-            if (deltaY < -100) { // Swipe up to close
-                const frontCard = document.querySelector(`.switcher-card[data-index="${currentCardIndex}"]`);
-                if (frontCard) frontCard.classList.add('is-exiting');
-                setTimeout(() => imageSwitcherOverlay.classList.remove('active'), 300);
-                setTimeout(() => frontCard && frontCard.classList.remove('is-exiting'), 500);
-                return;
-            }
-
-            const threshold = window.innerWidth / 4;
-            if (deltaX > threshold) {
-                currentCardIndex = Math.max(0, currentCardIndex - 1);
-            } else if (deltaX < -threshold) {
-                currentCardIndex = Math.min(userImages.length - 1, currentCardIndex + 1);
-            }
-            deltaX = 0;
-            deltaY = 0;
-            updateCards();
-        }
-
-        // --- Chat Logic ---
-        function renderMessage(msg) {
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${msg.sender === userId ? 'sent' : 'received'}`;
-            messageEl.textContent = msg.text;
-            chatMessages.appendChild(messageEl);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function sendMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-
-            const message = {
-                sender: userId,
-                text: text,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            const chatRef = database.ref(`chats/${chatRoomId}`);
-            chatRef.push(message);
-
-            chatInput.value = '';
-        }
+        function onDragStart(e) { if (e.target.closest('button')) return; e.preventDefault(); isDragging = true; startX = e.pageX || e.touches[0].pageX; startY = e.pageY || e.touches[0].pageY; deltaX = 0; deltaY = 0; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.add('is-dragging')); }
+        function onDragMove(e) { if (!isDragging) return; const currentX = e.pageX || e.touches[0].pageX; const currentY = e.pageY || e.touches[0].pageY; deltaX = currentX - startX; deltaY = currentY - startY; updateCards(); }
+        function onDragEnd() { if (!isDragging) return; isDragging = false; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.remove('is-dragging')); if (deltaY < -100) { const frontCard = document.querySelector(`.switcher-card[data-index="${currentCardIndex}"]`); if (frontCard) frontCard.classList.add('is-exiting'); setTimeout(() => imageSwitcherOverlay.classList.remove('active'), 300); setTimeout(() => frontCard && frontCard.classList.remove('is-exiting'), 500); return; } const threshold = window.innerWidth / 4; if (deltaX > threshold) { currentCardIndex = Math.max(0, currentCardIndex - 1); } else if (deltaX < -threshold) { currentCardIndex = Math.min(userImages.length - 1, currentCardIndex + 1); } deltaX = 0; deltaY = 0; updateCards(); }
         
-        function listenForMessages() {
-            const chatRef = database.ref(`chats/${chatRoomId}`);
-            // Clear old messages before listening
-            chatMessages.innerHTML = '';
-            chatRef.on('child_added', snapshot => {
-                const msg = snapshot.val();
-                if(msg) {
-                    renderMessage(msg);
-                }
-            });
-        }
-
-        // --- Event Listeners ---
-        function setupEventListeners() {
-            dateInput.addEventListener('change', () => calculateAndDisplay(false));
-            photosMenuBtn.addEventListener('click', () => {
-                imageSwitcherOverlay.classList.add('active');
-                updateCards(true);
-            });
-            chatMenuBtn.addEventListener('click', () => {
-                chatModalOverlay.classList.add('active');
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            });
-            toolsMenuBtn.addEventListener('click', () => {
-                settingsModalOverlay.classList.add('active');
-                updateActiveThumbnail();
-            });
-
-            [imageSwitcherOverlay, settingsModalOverlay, chatModalOverlay].forEach(overlay => {
-                overlay.addEventListener('click', e => {
-                    if (e.target === overlay) overlay.classList.remove('active');
-                });
-            });
-
-            cardContainer.addEventListener('mousedown', onDragStart);
-            cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
-            window.addEventListener('mousemove', onDragMove);
-            window.addEventListener('touchmove', onDragMove, { passive: false });
-            window.addEventListener('mouseup', onDragEnd);
-            window.addEventListener('touchend', onDragEnd);
-
-            musicToggleBtn.addEventListener('click', () => {
-                if (backgroundMusic.paused) {
-                    backgroundMusic.play().catch(e => console.log("Playback was prevented.", e));
-                } else {
-                    backgroundMusic.pause();
-                }
-            });
-
-            backgroundMusic.onplay = () => { musicToggleBtn.textContent = 'Tắt nhạc'; };
-            backgroundMusic.onpause = () => { musicToggleBtn.textContent = 'Bật nhạc'; };
-
-            // Updated Copy Link Button
-            document.getElementById('copy-link-btn').addEventListener('click', () => {
-                const mainUrl = window.location.origin + window.location.pathname;
-                navigator.clipboard.writeText(mainUrl).then(() => {
-                    const feedback = document.getElementById('copy-feedback');
-                    feedback.style.opacity = '1';
-                    setTimeout(() => { feedback.style.opacity = '0'; }, 2000);
-                }).catch(() => alert('Không thể sao chép liên kết!'));
-            });
-
-            sendMessageBtn.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keypress', e => {
-                if (e.key === 'Enter') sendMessage();
-            });
-        }
-
         initialize();
     });
     </script>
 </body>
     </html>
-                
     
