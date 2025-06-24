@@ -4,142 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Đếm Ngày Yêu Thương</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
+        :root{--text-color:#ffffff;--primary-color:#8AB4F8;--card-background:rgba(30,30,30,0.7);--border-color:rgba(255,255,255,0.15);--border-radius:24px;--font-family:'Quicksand',sans-serif;}
+        body{font-family:var(--font-family);color:var(--text-color);margin:0;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;position:relative;background-image:url('https://files.catbox.moe/j61spo.jpeg');background-size:cover;background-position:center;transition:background-image 1.5s ease-in-out;}
+        body::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.3);backdrop-filter:blur(10px) saturate(120%);z-index:-1;}
+        .container{width:100%;max-width:380px;padding:35px;background:var(--card-background);border-radius:var(--border-radius);border:1px solid var(--border-color);box-shadow:0 8px 32px rgba(0,0,0,0.3);text-align:center;z-index:2;animation:fadeIn 1.2s ease-in-out;transition:transform 0.5s ease,opacity 0.5s ease;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+        h1{font-size:28px;font-weight:700;margin:0 0 30px;letter-spacing:1px;}
+        .date-input-container label{display:block;margin-bottom:12px;font-size:16px;color:rgba(255,255,255,0.8);}
+        #startDate{width:calc(100% - 24px);padding:12px;border-radius:12px;border:1px solid var(--border-color);background-color:rgba(0,0,0,0.2);color:var(--text-color);font-family:inherit;font-size:16px;text-align:center;cursor:pointer;}
+        #startDate::-webkit-calendar-picker-indicator{filter:invert(1);}
+        .counter-stack{display:flex;flex-direction:column;gap:15px;background-color:rgba(0,0,0,0.2);border-radius:16px;padding:20px;border:1px solid var(--border-color);margin-top:10px;}
+        .counter-line .label{font-size:17px;color:rgba(255,255,255,0.7);margin-bottom:5px;display:block;}
+        .counter-line .value{font-size:42px;font-weight:700;line-height:1;}
+        .counter-line .value .unit{font-size:18px;font-weight:500;margin-left:8px;color:var(--primary-color);}
 
-        :root {
-            --text-color: #ffffff;
-            /* Thay đổi màu nhấn sang màu xanh Gemini */
-            --primary-color: #8AB4F8; 
-            --card-background: rgba(30, 30, 30, 0.7);
-            --border-color: rgba(255, 255, 255, 0.15);
-            --border-radius: 24px;
-            --font-family: 'Quicksand', sans-serif;
+        /* --- CSS CHO KHUNG CHAT --- */
+        #chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            color: black;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            z-index: 99;
+        }
+        #chat-toggle-btn:hover { transform: scale(1.1); }
+
+        #chat-container {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            z-index: 98;
+            transform: scale(0.8) translateY(50px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+        }
+        #chat-container.open {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        body {
-            font-family: var(--font-family);
-            color: var(--text-color);
-            margin: 0; padding: 20px;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh;
-            overflow: hidden; position: relative;
-            background-size: cover; background-position: center;
-            transition: background-image 1.5s ease-in-out;
-        }
-        
-        body::before {
-            content: ''; position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px) saturate(120%);
-            z-index: -1;
+        .chat-header {
+            padding: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
         }
 
-        .container {
-            width: 100%; max-width: 380px; padding: 35px;
-            background: var(--card-background); border-radius: var(--border-radius);
-            border: 1px solid var(--border-color); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            text-align: center; z-index: 2;
-            animation: fadeIn 1.2s ease-in-out;
-            transition: transform 0.5s ease, opacity 0.5s ease;
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse; /* Tin mới nhất ở dưới */
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+        .message .sender-name {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+        .message.sent {
+            background-color: var(--primary-color);
+            color: #111;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .message.received {
+            background-color: #3e4042;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
         }
 
-        h1 { font-size: 28px; font-weight: 700; margin: 0 0 30px; letter-spacing: 1px; }
-        .date-input-container label { display: block; margin-bottom: 12px; font-size: 16px; color: rgba(255, 255, 255, 0.8); }
-        #startDate {
-            width: calc(100% - 24px); padding: 12px; border-radius: 12px;
-            border: 1px solid var(--border-color); background-color: rgba(0, 0, 0, 0.2);
-            color: var(--text-color); font-family: inherit; font-size: 16px; text-align: center; cursor: pointer;
+        .chat-input-form {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid var(--border-color);
         }
-        #startDate::-webkit-calendar-picker-indicator { filter: invert(1); }
+        #message-input {
+            flex-grow: 1;
+            border: none;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: white;
+            font-family: inherit;
+        }
+        #message-input:focus { outline: none; }
+        #send-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
 
-        .counter-stack {
-            display: flex; flex-direction: column; gap: 15px; background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); margin-top: 10px;
-        }
-        .counter-line .label { font-size: 17px; color: rgba(255, 255, 255, 0.7); margin-bottom: 5px; display: block; }
-        .counter-line .value { font-size: 42px; font-weight: 700; line-height: 1; }
-        .counter-line .value .unit { font-size: 18px; font-weight: 500; margin-left: 8px; color: var(--primary-color); }
-
-        .fixed-controls {
-            position: fixed; top: 20px; right: 20px; z-index: 10; display: flex; gap: 10px;
-        }
-        .control-btn {
-            width: 45px; height: 45px; background: var(--card-background);
-            border: 1px solid var(--border-color); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 22px; cursor: pointer; transition: transform 0.2s, background-color 0.3s;
-        }
-        .control-btn:hover { transform: scale(1.1) rotate(15deg); }
-
-        .overlay {
-            position: fixed; inset: 0; z-index: 20;
-            background-color: rgba(0,0,0,0.3); backdrop-filter: blur(15px) brightness(0.7);
-            display: none; opacity: 0; transition: opacity 0.4s ease;
-            user-select: none; -webkit-user-select: none;
-        }
-        .overlay.active { display: flex; opacity: 1; }
-        .container.menu-open { transform: scale(0.9) translateY(-20px); opacity: 0.7; }
-        
-        #image-switcher-overlay { justify-content: center; align-items: center; }
-        .card-container {
-            position: relative; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            perspective: 1500px; transform-style: preserve-3d;
-        }
-        .switcher-card {
-            position: absolute; width: clamp(280px, 70vw, 320px); height: clamp(400px, 70vh, 480px);
-            background-size: cover; background-position: center;
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--border-radius);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            cursor: grab;
-            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
-        }
-        .switcher-card.is-dragging { transition: none; cursor: grabbing; }
-        .switcher-card.is-exiting { transform: translateY(-150vh) rotate(15deg) !important; opacity: 0 !important; }
-        .switcher-hint { position: absolute; bottom: 5%; color: rgba(255,255,255,0.6); font-size: 14px; }
-
-        #settings-modal-overlay { justify-content: center; align-items: center; }
-        .modal-content {
-            width: 100%; max-width: 340px;
-            background: linear-gradient(135deg, rgba(50, 50, 50, 0.8), rgba(30, 30, 30, 0.8));
-            border-radius: var(--border-radius); border: 1px solid var(--border-color);
-            padding: 25px; box-sizing: border-box; color: white;
-            animation: fadeIn 0.4s ease;
-        }
-        .modal-content h2 { margin: 0 0 15px; font-size: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .modal-content p { margin: 15px 0 10px; text-align: left; font-weight: 500;}
-        .theme-thumbnails { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .thumbnail {
-            width: 100%; padding-bottom: 100%;
-            background-size: cover; background-position: center; border-radius: 10px;
-            cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s, transform 0.2s;
-        }
-        .thumbnail:hover { transform: scale(1.05); }
-        .thumbnail.active { border-color: var(--primary-color); }
-        .tool-section button {
-            width: 100%; padding: 12px; font-family: inherit; font-size: 16px; border: 1px solid var(--border-color);
-            background-color: rgba(255,255,255,0.1); color: white; border-radius: 10px; cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        .tool-section button:active { transform: scale(0.95); }
-        #copy-feedback { text-align: center; margin-top: 10px; opacity: 0; transition: opacity 0.3s; color: var(--primary-color); font-weight: 500;}
     </style>
 </head>
 <body>
-    <audio id="background-music" loop src="https://files.catbox.moe/sekfb8.aac"></audio>
-
-    <div class="fixed-controls">
-        <div id="photos-menu-btn" class="control-btn">🖼️</div>
-        <div id="tools-menu-btn" class="control-btn">⚙️</div>
-    </div>
-    
     <div class="container">
         <h1 id="main-title">Hành Trình Yêu Thương</h1>
         <div class="date-input-container">
@@ -158,210 +153,108 @@
             </div>
         </div>
     </div>
-
-    <div id="image-switcher-overlay" class="overlay">
-        <div id="card-container" class="card-container"></div>
-        <p class="switcher-hint">Vuốt lên để đóng</p>
-    </div>
-
-    <div id="settings-modal-overlay" class="overlay">
-        <div class="modal-content">
-            <h2>Trung tâm điều khiển</h2>
-            <div class="tool-section">
-                <p>Chọn ảnh nền:</p>
-                <div class="theme-thumbnails"></div>
-            </div>
-            <div class="tool-section">
-                <p>Âm nhạc:</p>
-                <button id="music-toggle-btn">Bật nhạc</button>
-            </div>
-            <div class="tool-section">
-                <p>Chia sẻ:</p>
-                <button id="copy-link-btn">Sao chép liên kết</button>
-                <p id="copy-feedback">Đã sao chép!</p>
-            </div>
-        </div>
+    
+    <div id="chat-toggle-btn">💌</div>
+    <div id="chat-container">
+        <div class="chat-header">Trò chuyện</div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <form class="chat-input-form" id="chat-form">
+            <input type="text" id="message-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+            <button type="submit" id="send-btn">➤</button>
+        </form>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- CÁC BIẾN VÀ PHẦN TỬ DOM ---
-        const body = document.body;
-        const mainContainer = document.querySelector('.container');
-        const startDateInput = document.getElementById('startDate');
-        const mainTitle = document.getElementById('main-title');
-        const dateLabel = document.getElementById('date-label');
-        const counterLabel = document.getElementById('counter-label');
-        const totalDaysVal = document.getElementById('total-days-val');
-        const monthsVal = document.getElementById('months-val');
-        const daysVal = document.getElementById('days-val');
-        const backgroundMusic = document.getElementById('background-music');
-        
-        const photosMenuBtn = document.getElementById('photos-menu-btn');
-        const toolsMenuBtn = document.getElementById('tools-menu-btn');
-        
-        const imageSwitcherOverlay = document.getElementById('image-switcher-overlay');
-        const cardContainer = document.getElementById('card-container');
-        const settingsModalOverlay = document.getElementById('settings-modal-overlay');
-        const thumbnailContainer = document.querySelector('.theme-thumbnails');
-        const musicToggleBtn = document.getElementById('music-toggle-btn');
+        // --- PHẦN CÀI ĐẶT FIREBASE ---
 
-        // --- CẤU HÌNH ---
-        const userImages = [
-            'https://files.catbox.moe/j61spo.jpeg', 'https://files.catbox.moe/rkchx4.jpeg',
-            'https://files.catbox.moe/g3wnnp.jpeg', 'https://files.catbox.moe/0fw4np.jpeg',
-            'https://files.catbox.moe/eid82u.jpeg'
-        ];
-        
-        let currentCardIndex = 0, isDragging = false;
-        let startX, startY, deltaX, deltaY;
-        let activeBgUrl = userImages[0];
+        // Đã thay thế bằng "chìa khóa" của bạn!
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwxXGRUACKsT4qey5iOOy4K1_qId83_fQ",
+            authDomain: "daylove-f86ca.firebaseapp.com",
+            projectId: "daylove-f86ca",
+            storageBucket: "daylove-f86ca.appspot.com",
+            messagingSenderId: "48917795319",
+            appId: "1:48917795319:web:ae83abf9e1d1ff8a061ef2",
+            measurementId: "G-LJ64B3LPT8"
+        };
 
-        // --- KHỞI TẠO ---
-        function initialize() {
-            changeBackground(activeBgUrl);
-            createImageSwitcherCards();
-            createSettingsThumbnails();
-            calculateAndDisplay(true); // true để kích hoạt animation lần đầu
-            setupEventListeners();
-        }
+        // --- HẾT PHẦN CÀI ĐẶT ---
 
-        function changeBackground(imageUrl) {
-            activeBgUrl = imageUrl;
-            const img = new Image(); img.src = imageUrl;
-            img.onload = () => { body.style.backgroundImage = `url(${imageUrl})`; };
-            updateActiveThumbnail();
-        }
 
-        // --- TẠO CÁC THÀNH PHẦN GIAO DIỆN ---
-        function createImageSwitcherCards() { /* Giữ nguyên */ }
-        function createSettingsThumbnails() { /* Giữ nguyên */ }
-        function createImageSwitcherCards() {
-            cardContainer.innerHTML = '';
-            userImages.forEach((url, index) => {
-                const card = document.createElement('div');
-                card.className = 'switcher-card'; card.dataset.index = index;
-                card.style.backgroundImage = `url(${url})`;
-                cardContainer.appendChild(card);
-            });
-        }
-        function createSettingsThumbnails() {
-            thumbnailContainer.innerHTML = '';
-            userImages.forEach(url => {
-                const thumb = document.createElement('div');
-                thumb.className = 'thumbnail'; thumb.dataset.url = url;
-                thumb.style.backgroundImage = `url(${url})`;
-                thumb.addEventListener('click', () => {
-                    changeBackground(url);
-                    setTimeout(() => settingsModalOverlay.classList.remove('active'), 200);
-                });
-                thumbnailContainer.appendChild(thumb);
-            });
-            updateActiveThumbnail();
-        }
+        // --- LOGIC CHAT ---
+        let db;
+        let currentUser = localStorage.getItem('chat_user_name');
 
-        function updateActiveThumbnail() {
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.toggle('active', thumb.dataset.url === activeBgUrl);
-            });
-        }
-        
-        // --- LOGIC ĐẾM NGÀY & ANIMATION ---
-        function animateValue(element, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                element.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('vi-VN');
-                if (progress < 1) window.requestAnimationFrame(step);
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        function calculateAndDisplay(isInitialLoad = false) {
-            const startDate = new Date(startDateInput.value);
-            if (isNaN(startDate.getTime())) return;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const isFuture = today < startDate;
-
-            mainTitle.textContent = isFuture ? 'Đếm Ngược Sự Kiện' : 'Hành Trình Yêu Thương';
-            dateLabel.textContent = isFuture ? 'Ngày diễn ra sự kiện' : 'Ngày bắt đầu kỷ niệm';
-            counterLabel.textContent = isFuture ? 'Còn lại' : 'Đã bên nhau';
-
-            const start = isFuture ? today : startDate;
-            const end = isFuture ? startDate : today;
-            const diffTime = Math.abs(end - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            let years = end.getFullYear() - start.getFullYear();
-            let months = end.getMonth() - start.getMonth();
-            let days = end.getDate() - start.getDate();
-            if (days < 0) { months--; days += new Date(end.getFullYear(), end.getMonth(), 0).getDate(); }
-            if (months < 0) { years--; months += 12; }
-            let totalMonths = years * 12 + months;
-            
-            if (isInitialLoad) {
-                animateValue(totalDaysVal, 0, diffDays, 1000);
-                animateValue(monthsVal, 0, totalMonths, 1000);
-                animateValue(daysVal, 0, days, 1000);
-            } else {
-                totalDaysVal.textContent = diffDays.toLocaleString('vi-VN');
-                monthsVal.textContent = totalMonths.toLocaleString('vi-VN');
-                daysVal.textContent = days.toLocaleString('vi-VN');
+        function initializeChat() {
+            if (!firebaseConfig.apiKey) {
+                console.error("Firebase config is missing!");
+                return;
             }
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+
+            if (!currentUser) {
+                currentUser = prompt("Để bắt đầu trò chuyện, vui lòng nhập tên của bạn:");
+                if (currentUser && currentUser.trim() !== '') {
+                    localStorage.setItem('chat_user_name', currentUser);
+                } else {
+                    alert("Bạn cần nhập tên để sử dụng tính năng chat.");
+                    return;
+                }
+            }
+            listenForMessages();
         }
 
-        // --- LOGIC TRÌNH XEM ẢNH & VUỐT ---
-        function updateCards(isInstant = false) { /* Giữ nguyên */ }
-        function onDragStart(e) { /* Giữ nguyên */ }
-        function onDragMove(e) { /* Giữ nguyên */ }
-        function onDragEnd() { /* Giữ nguyên */ }
-        function updateCards(isInstant = false) {const cards = document.querySelectorAll('.switcher-card'); cards.forEach((card, i) => { const offset = i - currentCardIndex; const absOffset = Math.abs(offset); const direction = Math.sign(offset); let tx = isDragging ? deltaX : 0; let ty = isDragging ? deltaY : 0; const transform = `translateX(calc(${offset * 70}% + ${tx}px)) scale(${1 - absOffset * 0.15}) rotateY(${direction * -20}deg) translateZ(${-absOffset * 100}px) translateY(${ty}px)`; if(isInstant) card.classList.add('is-dragging'); card.style.transform = transform; card.style.opacity = absOffset > 2 ? '0' : '1'; card.style.zIndex = userImages.length - absOffset; if(isInstant) card.offsetHeight; if(isInstant) card.classList.remove('is-dragging'); });}
-        function onDragStart(e) {if(e.target.closest('button')) return; e.preventDefault(); isDragging = true; startX = e.pageX || e.touches[0].pageX; startY = e.pageY || e.touches[0].pageY; deltaX = 0; deltaY = 0; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.add('is-dragging'));}
-        function onDragMove(e) {if (!isDragging) return; currentX = e.pageX || e.touches[0].pageX; currentY = e.pageY || e.touches[0].pageY; deltaX = currentX - startX; deltaY = currentY - startY; updateCards();}
-        function onDragEnd() {if (!isDragging) return; isDragging = false; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.remove('is-dragging')); if (deltaY < -100) { const frontCard = document.querySelector(`.switcher-card[data-index="${currentCardIndex}"]`); if(frontCard) frontCard.classList.add('is-exiting'); setTimeout(() => imageSwitcherOverlay.classList.remove('active'), 300); setTimeout(() => frontCard && frontCard.classList.remove('is-exiting'), 500); return; } const threshold = window.innerWidth / 4; if (deltaX > threshold) { currentCardIndex = Math.max(0, currentCardIndex - 1); } else if (deltaX < -threshold) { currentCardIndex = Math.min(userImages.length - 1, currentCardIndex + 1); } deltaX = 0; deltaY = 0; updateCards();}
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageText = messageInput.value;
+            if (messageText.trim() === '') return;
 
-        // --- LẮNG NGHE SỰ KIỆN ---
-        function setupEventListeners() {
-            startDateInput.addEventListener('change', () => calculateAndDisplay(false));
-            
-            photosMenuBtn.addEventListener('click', () => {
-                imageSwitcherOverlay.classList.add('active');
-                updateCards(true);
-            });
-            toolsMenuBtn.addEventListener('click', () => {
-                settingsModalOverlay.classList.add('active');
-                updateActiveThumbnail();
-            });
+            const message = {
+                name: currentUser,
+                text: messageText,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-            imageSwitcherOverlay.addEventListener('click', (e) => { if (e.target === imageSwitcherOverlay) imageSwitcherOverlay.classList.remove('active'); });
-            settingsModalOverlay.addEventListener('click', (e) => { if (e.target === settingsModalOverlay) settingsModalOverlay.classList.remove('active'); });
-            
-            cardContainer.addEventListener('mousedown', onDragStart);
-            cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
-            window.addEventListener('mousemove', onDragMove);
-            window.addEventListener('touchmove', onDragMove, { passive: false });
-            window.addEventListener('mouseup', onDragEnd);
-            window.addEventListener('touchend', onDragEnd);
+            db.collection('messages').add(message);
+            messageInput.value = '';
+        });
 
-            musicToggleBtn.addEventListener('click', () => {
-                backgroundMusic.paused ? backgroundMusic.play() : backgroundMusic.pause();
-            });
-            backgroundMusic.onplay = () => { musicToggleBtn.textContent = 'Tắt nhạc'; };
-            backgroundMusic.onpause = () => { musicToggleBtn.textContent = 'Bật nhạc'; };
-
-            document.getElementById('copy-link-btn').addEventListener('click', () => {
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                    const feedback = document.getElementById('copy-feedback');
-                    feedback.style.opacity = '1';
-                    setTimeout(() => { feedback.style.opacity = '0'; }, 2000);
-                }).catch(err => alert('Không thể sao chép liên kết!'));
+        function listenForMessages() {
+            db.collection('messages').orderBy('timestamp', 'desc').limit(50).onSnapshot(snapshot => {
+                const messagesContainer = document.getElementById('chat-messages');
+                messagesContainer.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const msg = doc.data();
+                    if (!msg.name || !msg.text) return; // Bỏ qua tin nhắn không hợp lệ
+                    const messageEl = document.createElement('div');
+                    messageEl.classList.add('message');
+                    messageEl.classList.toggle('sent', msg.name === currentUser);
+                    messageEl.classList.toggle('received', msg.name !== currentUser);
+                    
+                    const senderName = msg.name === currentUser ? 'Bạn' : msg.name;
+                    messageEl.innerHTML = `<div class="sender-name">${senderName}</div><div class="text">${msg.text}</div>`;
+                    messagesContainer.appendChild(messageEl);
+                });
             });
         }
+        
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatContainer = document.getElementById('chat-container');
+        chatToggleBtn.addEventListener('click', () => {
+            chatContainer.classList.toggle('open');
+        });
 
-        initialize();
+        initializeChat();
+
+        // --- CÁC LOGIC KHÁC GIỮ NGUYÊN ---
+        const startDateInput=document.getElementById("startDate"),mainTitle=document.getElementById("main-title"),dateLabel=document.getElementById("date-label"),counterLabel=document.getElementById("counter-label"),totalDaysVal=document.getElementById("total-days-val"),monthsVal=document.getElementById("months-val"),daysVal=document.getElementById("days-val");function animateValue(e,t,n,l){let a=null;const d=o=>{a||(a=o);const i=Math.min((o-a)/l,1);e.innerHTML=Math.floor(i*(n-t)+t).toLocaleString("vi-VN"),i<1&&window.requestAnimationFrame(d)};window.requestAnimationFrame(d)}function calculateAndDisplay(e=!1){const t=new Date(startDateInput.value);if(isNaN(t.getTime()))return;const n=new Date;n.setHours(0,0,0,0);const l=n<t;mainTitle.textContent=l?"Đếm Ngược Sự Kiện":"Hành Trình Yêu Thương",dateLabel.textContent=l?"Ngày diễn ra sự kiện":"Ngày bắt đầu kỷ niệm",counterLabel.textContent=l?"Còn lại":"Đã bên nhau";const a=l?n:t,d=l?t:n,o=Math.abs(d-a),i=Math.ceil(o/864e5);let c=d.getFullYear()-a.getFullYear(),s=d.getMonth()-a.getMonth(),r=d.getDate()-a.getDate();r<0&&(s--,r+=new Date(d.getFullYear(),d.getMonth(),0).getDate()),s<0&&(c--,s+=12);let m=12*c+s;e?(animateValue(totalDaysVal,0,i,1e3),animateValue(monthsVal,0,m,1e3),animateValue(daysVal,0,r,1e3)):(totalDaysVal.textContent=i.toLocaleString("vi-VN"),monthsVal.textContent=m.toLocaleString("vi-VN"),daysVal.textContent=r.toLocaleString("vi-VN"))}startDateInput.addEventListener("change",()=>calculateAndDisplay(!1)),calculateAndDisplay(!0);
     });
     </script>
 </body>
-</html>
+                                                                                    </html>
+                                   
