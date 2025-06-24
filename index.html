@@ -289,6 +289,15 @@
             border-color: var(--primary-color);
         }
 
+        .tool-section {
+            margin-bottom: 15px;
+        }
+
+        .tool-section p {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+
         .tool-section button {
             width: 100%;
             padding: 12px;
@@ -300,6 +309,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: background 0.2s;
+            margin-top: 5px;
         }
 
         .tool-section button:hover {
@@ -315,7 +325,7 @@
             font-size: 14px;
         }
 
-        /* --- SỔ LƯU BÚT (CHAT) STYLES --- */
+        /* --- SỔ LƯU BÚT (COMMENT) STYLES --- */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -468,19 +478,25 @@
                 <button id="copy-link-btn">Sao chép liên kết</button>
                 <p id="copy-feedback">Đã sao chép!</p>
             </div>
+            <div class="tool-section">
+                <p>Quản lý dữ liệu bình luận:</p>
+                <button id="export-data-btn">Xuất dữ liệu (JSON)</button>
+                <button id="import-data-btn">Nhập dữ liệu (JSON)</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            </div>
         </div>
     </div>
 
     <div id="chat-modal-overlay" class="overlay">
         <div class="modal-content">
-            <h2>Sổ Lưu Bút</h2>
+            <h2>Bình luận</h2>
             <div class="chat-container">
                 <div class="name-input-container">
                     <input type="text" id="name-input" placeholder="Nhập tên của bạn...">
                 </div>
                 <div class="chat-messages" id="chat-messages"></div>
                 <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Để lại lời nhắn...">
+                    <input type="text" id="chat-input" placeholder="Viết bình luận...">
                     <button id="send-message-btn">➤</button>
                 </div>
             </div>
@@ -526,12 +542,13 @@
         const chatModalOverlay = document.getElementById('chat-modal-overlay');
         const thumbnailContainer = document.querySelector('.theme-thumbnails');
         const musicToggleBtn = document.getElementById('music-toggle-btn');
-        
-        // Guestbook (Chat) Elements
         const nameInput = document.getElementById('name-input');
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const sendMessageBtn = document.getElementById('send-message-btn');
+        const exportDataBtn = document.getElementById('export-data-btn');
+        const importDataBtn = document.getElementById('import-data-btn');
+        const importFileInput = document.getElementById('import-file-input');
 
         // --- Configuration ---
         const userImages = [
@@ -541,15 +558,12 @@
         ];
         let currentCardIndex = 0, isDragging = false;
         let startX, startY, deltaX, deltaY;
-        let activeBgUrl = userImages[0];
         
-        // --- Public Guestbook Chat ---
-        const chatRoomId = 'public_guestbook'; // Everyone joins this single public room
+        const chatRoomId = 'public_comments_section';
 
         // --- Initialize ---
         function initialize() {
-            loadUserName();
-            changeBackground(activeBgUrl);
+            loadUserSettings();
             createImageSwitcherCards();
             createSettingsThumbnails();
             calculateAndDisplay(true);
@@ -557,22 +571,36 @@
             listenForMessages();
         }
 
-        function loadUserName() {
-            const savedName = localStorage.getItem('guestbookUserName');
+        function loadUserSettings() {
+            // Load saved background image
+            const savedBg = localStorage.getItem('loveAppBg');
+            const initialBg = savedBg || userImages[0];
+            changeBackground(initialBg, true);
+
+            // Load saved user name
+            const savedName = localStorage.getItem('commenterName');
             if (savedName) {
                 nameInput.value = savedName;
             }
         }
 
-        function changeBackground(imageUrl) {
-            activeBgUrl = imageUrl;
+        function changeBackground(imageUrl, isInitialLoad = false) {
             const img = new Image();
             img.src = imageUrl;
             img.onload = () => { body.style.backgroundImage = `url(${imageUrl})`; };
-            updateActiveThumbnail();
+            if (!isInitialLoad) {
+                localStorage.setItem('loveAppBg', imageUrl);
+            }
+            updateActiveThumbnail(imageUrl);
         }
-
-        // --- Counter Logic & Animation ---
+        
+        function updateActiveThumbnail(activeUrl) {
+             document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.toggle('active', thumb.dataset.url === activeUrl);
+            });
+        }
+        
+        // --- Counter Logic ---
         function calculateAndDisplay(isInitialLoad = false) {
             const startDate = new Date(dateInput.value);
             if (isNaN(startDate.getTime())) return;
@@ -623,43 +651,27 @@
             window.requestAnimationFrame(step);
         }
 
-        // --- Guestbook (Chat) Logic ---
+        // --- Comment Section Logic ---
         function sendMessage() {
             const name = nameInput.value.trim();
             const text = chatInput.value.trim();
-
-            if (!name) {
-                alert('Vui lòng nhập tên của bạn!');
-                nameInput.focus();
-                return;
-            }
+            if (!name) { alert('Vui lòng nhập tên của bạn!'); nameInput.focus(); return; }
             if (!text) return;
-
-            localStorage.setItem('guestbookUserName', name); // Save name
-
-            const message = {
-                name: name,
-                text: text,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            const chatRef = database.ref(`chats/${chatRoomId}`);
-            chatRef.push(message);
+            localStorage.setItem('commenterName', name);
+            const message = { name: name, text: text, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            database.ref(`comments/${chatRoomId}`).push(message);
             chatInput.value = '';
         }
 
         function renderMessage(msg) {
             const messageEl = document.createElement('div');
-            messageEl.className = 'message'; // All messages have the same style
-
+            messageEl.className = 'message';
             const senderEl = document.createElement('div');
             senderEl.className = 'message-sender';
             senderEl.textContent = msg.name;
-
             const textEl = document.createElement('div');
             textEl.className = 'message-text';
             textEl.textContent = msg.text;
-
             messageEl.appendChild(senderEl);
             messageEl.appendChild(textEl);
             chatMessages.appendChild(messageEl);
@@ -667,31 +679,65 @@
         }
         
         function listenForMessages() {
-            const chatRef = database.ref(`chats/${chatRoomId}`);
+            const commentsRef = database.ref(`comments/${chatRoomId}`);
             chatMessages.innerHTML = '';
-            chatRef.on('child_added', snapshot => {
+            commentsRef.on('child_added', snapshot => {
                 const msg = snapshot.val();
-                if(msg) {
-                    renderMessage(msg);
-                }
+                if(msg) renderMessage(msg);
             });
         }
 
-        // --- Event Listeners & Other UI Functions ---
+        // --- Data Management ---
+        function exportData() {
+            const commentsRef = database.ref(`comments/${chatRoomId}`);
+            commentsRef.once('value').then(snapshot => {
+                const data = snapshot.val();
+                if (!data) {
+                    alert("Không có dữ liệu bình luận để xuất!");
+                    return;
+                }
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], {type: "application/json"});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'comments.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }).catch(error => alert("Lỗi khi xuất dữ liệu: " + error.message));
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (confirm("Thao tác này sẽ XÓA TẤT CẢ các bình luận hiện tại và thay thế bằng dữ liệu từ tệp. Bạn có chắc chắn muốn tiếp tục?")) {
+                        const commentsRef = database.ref(`comments/${chatRoomId}`);
+                        commentsRef.set(data).then(() => {
+                            alert("Nhập dữ liệu thành công!");
+                            listenForMessages(); // Refresh the view
+                        }).catch(error => alert("Lỗi khi ghi dữ liệu: " + error.message));
+                    }
+                } catch (error) {
+                    alert("Tệp JSON không hợp lệ hoặc đã bị lỗi: " + error.message);
+                }
+            };
+            reader.readAsText(file);
+            importFileInput.value = ''; // Reset input
+        }
+
+        // --- Event Listeners ---
         function setupEventListeners() {
             dateInput.addEventListener('change', () => calculateAndDisplay(false));
             photosMenuBtn.addEventListener('click', () => { imageSwitcherOverlay.classList.add('active'); updateCards(true); });
             chatMenuBtn.addEventListener('click', () => { chatModalOverlay.classList.add('active'); chatMessages.scrollTop = chatMessages.scrollHeight; });
-            toolsMenuBtn.addEventListener('click', () => { settingsModalOverlay.classList.add('active'); updateActiveThumbnail(); });
+            toolsMenuBtn.addEventListener('click', () => { settingsModalOverlay.classList.add('active'); updateActiveThumbnail(localStorage.getItem('loveAppBg') || userImages[0]); });
             [imageSwitcherOverlay, settingsModalOverlay, chatModalOverlay].forEach(overlay => {
                 overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
             });
-            cardContainer.addEventListener('mousedown', onDragStart);
-            cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
-            window.addEventListener('mousemove', onDragMove);
-            window.addEventListener('touchmove', onDragMove, { passive: false });
-            window.addEventListener('mouseup', onDragEnd);
-            window.addEventListener('touchend', onDragEnd);
             musicToggleBtn.addEventListener('click', () => {
                 if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.log("Playback prevented.", e)); } 
                 else { backgroundMusic.pause(); }
@@ -708,9 +754,17 @@
             });
             sendMessageBtn.addEventListener('click', sendMessage);
             chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+            exportDataBtn.addEventListener('click', exportData);
+            importDataBtn.addEventListener('click', () => importFileInput.click());
+            importFileInput.addEventListener('change', importData);
+            cardContainer.addEventListener('mousedown', onDragStart);
+            cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
+            window.addEventListener('mousemove', onDragMove);
+            window.addEventListener('touchmove', onDragMove, { passive: false });
+            window.addEventListener('mouseup', onDragEnd);
+            window.addEventListener('touchend', onDragEnd);
         }
         
-        // --- Functions below are for UI components that don't need frequent changes ---
         function createSettingsThumbnails() {
             thumbnailContainer.innerHTML = '';
             userImages.forEach(url => {
@@ -718,18 +772,8 @@
                 thumb.className = 'thumbnail';
                 thumb.dataset.url = url;
                 thumb.style.backgroundImage = `url(${url})`;
-                thumb.addEventListener('click', () => {
-                    changeBackground(url);
-                    settingsModalOverlay.classList.remove('active');
-                });
+                thumb.addEventListener('click', () => { changeBackground(url); });
                 thumbnailContainer.appendChild(thumb);
-            });
-            updateActiveThumbnail();
-        }
-
-        function updateActiveThumbnail() {
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.toggle('active', thumb.dataset.url === activeBgUrl);
             });
         }
         function createImageSwitcherCards() {
@@ -742,23 +786,7 @@
                 cardContainer.appendChild(card);
             });
         }
-        function updateCards(isInstant = false) {
-            const cards = document.querySelectorAll('.switcher-card');
-            cards.forEach((card, i) => {
-                const offset = i - currentCardIndex;
-                const absOffset = Math.abs(offset);
-                const direction = Math.sign(offset);
-                let tx = isDragging ? deltaX : 0;
-                let ty = isDragging ? deltaY : 0;
-                const transform = `translateX(calc(${offset * 60}% + ${tx}px)) scale(${1 - absOffset * 0.1}) rotateY(${direction * -15}deg) translateZ(${-absOffset * 80}px) translateY(${ty}px)`;
-                if (isInstant) card.classList.add('is-dragging');
-                card.style.transform = transform;
-                card.style.opacity = absOffset > 2 ? '0' : '1';
-                card.style.zIndex = userImages.length - absOffset;
-                if (isInstant) card.offsetHeight;
-                if (isInstant) card.classList.remove('is-dragging');
-            });
-        }
+        function updateCards(isInstant = false) { const cards = document.querySelectorAll('.switcher-card'); cards.forEach((card, i) => { const offset = i - currentCardIndex; const absOffset = Math.abs(offset); const direction = Math.sign(offset); let tx = isDragging ? deltaX : 0; let ty = isDragging ? deltaY : 0; const transform = `translateX(calc(${offset * 60}% + ${tx}px)) scale(${1 - absOffset * 0.1}) rotateY(${direction * -15}deg) translateZ(${-absOffset * 80}px) translateY(${ty}px)`; if (isInstant) card.classList.add('is-dragging'); card.style.transform = transform; card.style.opacity = absOffset > 2 ? '0' : '1'; card.style.zIndex = userImages.length - absOffset; if (isInstant) card.offsetHeight; if (isInstant) card.classList.remove('is-dragging'); }); }
         function onDragStart(e) { if (e.target.closest('button')) return; e.preventDefault(); isDragging = true; startX = e.pageX || e.touches[0].pageX; startY = e.pageY || e.touches[0].pageY; deltaX = 0; deltaY = 0; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.add('is-dragging')); }
         function onDragMove(e) { if (!isDragging) return; const currentX = e.pageX || e.touches[0].pageX; const currentY = e.pageY || e.touches[0].pageY; deltaX = currentX - startX; deltaY = currentY - startY; updateCards(); }
         function onDragEnd() { if (!isDragging) return; isDragging = false; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.remove('is-dragging')); if (deltaY < -100) { const frontCard = document.querySelector(`.switcher-card[data-index="${currentCardIndex}"]`); if (frontCard) frontCard.classList.add('is-exiting'); setTimeout(() => imageSwitcherOverlay.classList.remove('active'), 300); setTimeout(() => frontCard && frontCard.classList.remove('is-exiting'), 500); return; } const threshold = window.innerWidth / 4; if (deltaX > threshold) { currentCardIndex = Math.max(0, currentCardIndex - 1); } else if (deltaX < -threshold) { currentCardIndex = Math.min(userImages.length - 1, currentCardIndex + 1); } deltaX = 0; deltaY = 0; updateCards(); }
@@ -767,5 +795,5 @@
     });
     </script>
 </body>
-    </html>
-    
+            </html>
+                
