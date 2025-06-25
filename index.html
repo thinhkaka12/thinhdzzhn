@@ -833,8 +833,8 @@
             if (snapshot.exists() && snapshot.val().name === name) {
                 currentUser.role = snapshot.val().role || 'user';
             } else {
-                // Tự động gán vai trò admin nếu tên là 'trthinhhn'
-                const role = name.toLowerCase() === 'trthinhhn' ? 'admin' : 'user';
+                // Tự động gán vai trò admin nếu tên là 'trthinhnh'
+                const role = name.toLowerCase() === 'trthinhnh' ? 'admin' : 'user';
                 await userRef.set({ name: name, role: role, isBanned: false });
                 currentUser.role = role;
             }
