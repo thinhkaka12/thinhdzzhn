@@ -12,12 +12,11 @@
         :root {
             --text-color: #ffffff;
             --primary-color: #007AFF;
-            /* Màu xanh iOS */
             --card-background: rgba(255, 255, 255, 0.1);
             --border-color: rgba(255, 255, 255, 0.2);
             --border-radius: 20px;
             --font-family: 'SF Pro Display', 'Quicksand', sans-serif;
-            --admin-color: #ff9500; /* Màu cam cho admin */
+            --admin-color: #ff9500;
         }
 
         body {
@@ -200,62 +199,6 @@
             align-items: center;
         }
         
-        /* Modal thiết lập tên người dùng */
-        .name-setup-modal {
-            background: var(--card-background);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .name-setup-modal h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .name-setup-modal input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background-color: rgba(0, 0, 0, 0.3);
-            color: var(--text-color);
-            font-family: inherit;
-            font-size: 16px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .name-setup-modal button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--primary-color);
-            color: white;
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, opacity 0.2s;
-        }
-
-        .name-setup-modal button:hover {
-            filter: brightness(1.1);
-        }
-
-        .name-setup-modal button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-
         .card-container {
             position: relative;
             width: 100%;
@@ -473,24 +416,24 @@
             line-height: 1.4;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            align-self: flex-start; /* Tin nhắn người khác mặc định bên trái */
+            align-self: flex-start;
             border-bottom-left-radius: 4px;
             display: flex;
             flex-direction: column;
         }
 
         .message.sent {
-            align-self: flex-end; /* Tin nhắn của mình thì qua bên phải */
+            align-self: flex-end;
             background: var(--primary-color);
             border-bottom-right-radius: 4px;
-            border-bottom-left-radius: 18px; /* Reset bo góc trái dưới */
+            border-bottom-left-radius: 18px;
         }
 
         .message-timestamp {
             font-size: 11px;
             color: rgba(255, 255, 255, 0.7);
             margin-top: 5px;
-            align-self: flex-end; /* Luôn hiển thị thời gian ở cuối bong bóng chat */
+            align-self: flex-end;
         }
 
         .message-sender {
@@ -503,11 +446,16 @@
         }
         
         .message.sent .message-sender {
-             color: rgba(255, 255, 255, 0.85); /* Đổi màu tên cho dễ đọc trên nền xanh */
+             color: rgba(255, 255, 255, 0.85);
+        }
+
+        .message-sender.admin {
+            color: var(--admin-color);
+            text-shadow: 0 0 5px var(--admin-color);
         }
 
         .admin-badge {
-            background-color: var(--admin-color); /* Sử dụng màu admin */
+            background-color: var(--admin-color);
             color: white;
             width: 15px;
             height: 15px;
@@ -520,12 +468,6 @@
             font-weight: bold;
         }
         
-        /* CSS cho tên admin nổi bật */
-        .message-sender.admin {
-            color: var(--admin-color);
-            text-shadow: 0 0 5px var(--admin-color);
-        }
-
         .admin-controls {
             display: flex;
             gap: 8px;
@@ -611,15 +553,6 @@
     </style>
 </head>
 <body>
-    <div id="name-setup-overlay" class="overlay">
-        <div class="name-setup-modal">
-            <h2>Chào mừng bạn!</h2>
-            <p style="font-size: 15px; color: rgba(255,255,255,0.8); margin-top: -10px; margin-bottom: 20px;">Vui lòng đặt tên để tham gia trò chuyện.</p>
-            <input type="text" id="name-setup-input" placeholder="Nhập tên của bạn...">
-            <button id="name-setup-btn">Xác nhận</button>
-        </div>
-    </div>
-
     <audio id="background-music" loop src="https://files.catbox.moe/sekfb8.aac"></audio>
 
     <div class="fixed-controls">
@@ -706,7 +639,7 @@
 
           
                 <div class="name-input-container">
-                    <input type="text" id="name-input" placeholder="Nhập để đổi tên của bạn...">
+                    <input type="text" id="name-input" placeholder="Nhập tên của bạn...">
                 </div>
                 <div class="chat-messages" id="chat-messages"></div>
                 
@@ -729,7 +662,6 @@
     <script>
     // --- Firebase Configuration ---
     const firebaseConfig = {
-      
         apiKey: "AIzaSyC-f-Cz5Clf70OPy6FLWxHHyxh30EMGRBg",
         authDomain: "daylove-6a8e5.firebaseapp.com",
         databaseURL: "https://daylove-6a8e5-default-rtdb.firebaseio.com",
@@ -741,6 +673,7 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
     document.addEventListener('DOMContentLoaded', function() {
         // --- DOM Elements ---
         const body = document.body;
@@ -753,7 +686,7 @@
         const monthsVal = document.getElementById('months-val');
         const daysVal = document.getElementById('days-val');
         const backgroundMusic = document.getElementById('background-music');
-        backgroundMusic.volume = 1.0; // <-- ĐẶT ÂM LƯỢNG TỐI ĐA
+        backgroundMusic.volume = 1.0;
         const photosMenuBtn = document.getElementById('photos-menu-btn');
         const chatMenuBtn = document.getElementById('chat-menu-btn');
         const toolsMenuBtn = document.getElementById('tools-menu-btn');
@@ -763,7 +696,7 @@
         const chatModalOverlay = document.getElementById('chat-modal-overlay');
         const thumbnailContainer = document.querySelector('.theme-thumbnails');
         const musicToggleBtn = document.getElementById('music-toggle-btn');
-        const nameInput = document.getElementById('name-input'); // Dùng để đổi tên
+        const nameInput = document.getElementById('name-input');
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const sendMessageBtn = document.getElementById('send-message-btn');
@@ -773,11 +706,6 @@
         const emojiBtn = document.getElementById('emoji-btn');
         const emojiPickerContainer = document.querySelector('.emoji-picker-container');
         const chatBackBtn = document.getElementById('chat-back-btn');
-        
-        // Modal thiết lập tên
-        const nameSetupOverlay = document.getElementById('name-setup-overlay');
-        const nameSetupInput = document.getElementById('name-setup-input');
-        const nameSetupBtn = document.getElementById('name-setup-btn');
 
         // --- Configuration ---
         const userImages = [
@@ -811,70 +739,53 @@
 
             let savedUID = localStorage.getItem('userUID');
             if (!savedUID) {
-                savedUID = database.ref().push().key; // Tạo UID duy nhất
+                savedUID = database.ref().push().key;
                 localStorage.setItem('userUID', savedUID);
             }
             currentUser.uid = savedUID;
 
             const savedName = localStorage.getItem('commenterName');
-            if (savedName) {
-                nameInput.value = savedName;
-                currentUser.name = savedName;
-                await checkUserRole(currentUser.uid, savedName);
-            } else {
-                // Nếu chưa có tên, hiển thị modal bắt buộc nhập tên
-                nameSetupOverlay.classList.add('active');
-            }
+            nameInput.value = savedName || `Người dùng #${savedUID.substring(0, 4)}`;
+            
+            await checkUserRole();
         }
 
-        async function checkUserRole(uid, name) {
-            const userRef = database.ref(`users/${uid}`);
+        async function checkUserRole() {
+            const userRef = database.ref(`users/${currentUser.uid}`);
             const snapshot = await userRef.once('value');
-            if (snapshot.exists() && snapshot.val().name === name) {
-                currentUser.role = snapshot.val().role || 'user';
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                currentUser.name = userData.name;
+                currentUser.role = userData.role || 'user';
+                nameInput.value = currentUser.name;
             } else {
-                // Tự động gán vai trò admin nếu tên là 'trthinhnh'
-                const role = name.toLowerCase() === 'trthinhnh' ? 'admin' : 'user';
-                await userRef.set({ name: name, role: role, isBanned: false });
+                currentUser.name = nameInput.value;
+                const role = currentUser.name.toLowerCase() === 'trhinhnh' ? 'admin' : 'user';
+                await userRef.set({ name: currentUser.name, role: role, isBanned: false });
                 currentUser.role = role;
             }
         }
-
-        async function setAndValidateUsername(newName) {
+        
+        async function updateUsername(newName) {
             const name = newName.trim();
             if (!name) {
-                alert('Vui lòng không để trống tên!');
-                return false;
+                alert('Tên không được để trống!');
+                nameInput.value = currentUser.name; // Reset lại tên cũ
+                return;
             }
 
-            try {
-                // Kiểm tra tên trùng lặp
-                const usersRef = database.ref('users');
-                const snapshot = await usersRef.orderByChild('name').equalTo(name).once('value');
-                if (snapshot.exists()) {
-                    const existingUID = Object.keys(snapshot.val())[0];
-                    if (existingUID !== currentUser.uid) {
-                        alert('Tên này đã có người sử dụng. Vui lòng chọn tên khác.');
-                        return false;
-                    }
-                }
-
-                // Cập nhật tên mới
-                currentUser.name = name;
-                localStorage.setItem('commenterName', name);
-                await checkUserRole(currentUser.uid, name);
-
-                // Cập nhật lại tên trong ô input của phòng chat
-                nameInput.value = name;
-
-                return true;
-            } catch (error) {
-                console.error("Lỗi khi xác thực tên người dùng:", error);
-                alert("Đã xảy ra lỗi khi kết nối tới máy chủ. Vui lòng kiểm tra lại Quy tắc (Rules) trên Firebase và thử lại.");
-                return false;
-            }
+            currentUser.name = name;
+            localStorage.setItem('commenterName', name);
+            const role = name.toLowerCase() === 'trhinhnh' ? 'admin' : 'user';
+            currentUser.role = role;
+            
+            await database.ref(`users/${currentUser.uid}`).set({
+                name: currentUser.name,
+                role: currentUser.role,
+                isBanned: false 
+            });
+            alert("Đã cập nhật tên thành công!");
         }
-
 
         function changeBackground(imageUrl, isInitialLoad = false) {
             const img = new Image();
@@ -945,21 +856,16 @@
 
         // --- Comment Section Logic ---
         async function sendMessage() {
-            if (!currentUser.name) {
-                alert("Vui lòng đặt tên trước khi gửi tin nhắn.");
-                nameSetupOverlay.classList.add('active'); // Mở lại modal nếu chưa có tên
-                return;
-            }
+            const text = chatInput.value.trim();
+            if (!text) return;
 
-            // Kiểm tra xem người dùng có bị cấm không
-            const userSnapshot = await database.ref(`users/${currentUser.uid}`).once('value');
-            if (userSnapshot.val() && userSnapshot.val().isBanned) {
+            // Kiểm tra trước khi gửi
+            const userRef = database.ref(`users/${currentUser.uid}`);
+            const snapshot = await userRef.once('value');
+            if (snapshot.exists() && snapshot.val().isBanned) {
                 alert('Bạn đã bị cấm chat.');
                 return;
             }
-
-            const text = chatInput.value.trim();
-            if (!text) return;
 
             const message = {
                 uid: currentUser.uid,
@@ -977,7 +883,6 @@
             messageEl.dataset.key = key;
             messageEl.dataset.uid = msg.uid;
 
-            // Nếu tin nhắn là của người dùng hiện tại, thêm class 'sent'
             if (msg.uid === currentUser.uid) {
                 messageEl.classList.add('sent');
             }
@@ -986,10 +891,9 @@
             senderEl.className = 'message-sender';
             
             const userSnapshot = await database.ref(`users/${msg.uid}`).once('value');
-            const userData = userSnapshot.val();
-            const isUserAdmin = userData && userData.role === 'admin';
+            const userData = userSnapshot.val() || { role: 'user' }; // Mặc định nếu chưa có user data
             
-            if (isUserAdmin) {
+            if (userData.role === 'admin') {
                 senderEl.classList.add('admin');
                 senderEl.innerHTML = `${msg.name} <span class="admin-badge">✓</span>`;
             } else {
@@ -1000,7 +904,6 @@
             textEl.className = 'message-text';
             textEl.textContent = msg.text;
 
-            // Tạo và thêm thời gian gửi
             const timestampEl = document.createElement('div');
             timestampEl.className = 'message-timestamp';
             const date = new Date(msg.timestamp);
@@ -1012,7 +915,6 @@
             messageEl.appendChild(textEl);
             messageEl.appendChild(timestampEl);
 
-            // Thêm các nút điều khiển của admin
             if (currentUser.role === 'admin' && msg.uid !== currentUser.uid) {
                 const controls = document.createElement('div');
                 controls.className = 'admin-controls';
@@ -1021,15 +923,14 @@
                 deleteBtn.textContent = 'Xóa';
                 deleteBtn.className = 'admin-btn delete';
                 deleteBtn.onclick = () => deleteMessage(key);
+                controls.appendChild(deleteBtn);
 
                 const banBtn = document.createElement('button');
                 banBtn.className = 'admin-btn ban';
-                const isBanned = userData && userData.isBanned;
-                banBtn.textContent = isBanned ? 'Bỏ cấm' : 'Cấm';
-                banBtn.onclick = () => toggleBanUser(msg.uid, !isBanned);
-                
-                controls.appendChild(deleteBtn);
+                banBtn.textContent = userData.isBanned ? 'Bỏ cấm' : 'Cấm';
+                banBtn.onclick = () => toggleBanUser(msg.uid, !userData.isBanned);
                 controls.appendChild(banBtn);
+                
                 messageEl.appendChild(controls);
             }
 
@@ -1039,13 +940,11 @@
         
         function listenForMessages() {
             const commentsRef = database.ref(`comments/${chatRoomId}`);
-            chatMessages.innerHTML = '';
             commentsRef.on('child_added', snapshot => {
                 const msg = snapshot.val();
                 if(msg) renderMessage(snapshot.key, msg);
             });
 
-            // Lắng nghe sự kiện xóa tin nhắn
             commentsRef.on('child_removed', snapshot => {
                 const removedEl = chatMessages.querySelector(`[data-key="${snapshot.key}"]`);
                 if (removedEl) removedEl.remove();
@@ -1062,14 +961,14 @@
         function toggleBanUser(uid, shouldBan) {
             const actionText = shouldBan ? 'cấm' : 'bỏ cấm';
             if (confirm(`Bạn có chắc muốn ${actionText} người dùng này?`)) {
-                 database.ref(`users/${uid}/isBanned`).set(shouldBan);
-                 alert(`Đã ${actionText} người dùng.`);
-                 // Tải lại tin nhắn để cập nhật trạng thái nút
-                 chatMessages.innerHTML = '';
-                 listenForMessages();
+                 database.ref(`users/${uid}/isBanned`).set(shouldBan)
+                    .then(() => {
+                        alert(`Đã ${actionText} người dùng.`);
+                        chatMessages.innerHTML = '';
+                        listenForMessages();
+                    });
             }
         }
-
 
         // --- Data Management ---
         function exportData() {
@@ -1079,15 +978,12 @@
                 if (!data) { alert("Không có dữ liệu bình luận để xuất!"); return; }
                 const dataStr = JSON.stringify(data, null, 2);
                 const blob = new Blob([dataStr], {type: "application/json"});
-        
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = 'comments.json';
                 a.click();
-          
                 URL.revokeObjectURL(url);
-  
             }).catch(error => alert("Lỗi khi xuất dữ liệu: " + error.message));
         }
 
@@ -1098,15 +994,14 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (confirm("Thao tác này sẽ XÓA TẤT CẢ các bình luận hiện tại và thay thế bằng dữ liệu từ tệp. Bạn có chắc chắn muốn tiếp tục?")) {
+                    if (confirm("Thao tác này sẽ XÓA TẤT CẢ các bình luận hiện tại. Bạn có chắc chắn muốn tiếp tục?")) {
                         const commentsRef = database.ref(`comments/${chatRoomId}`);
                         commentsRef.set(data).then(() => {
                             alert("Nhập dữ liệu thành công!");
                             listenForMessages();
                         }).catch(error => alert("Lỗi khi ghi dữ liệu: " + error.message));
                     }
-                } catch (error) { alert("Tệp JSON không hợp lệ hoặc đã bị lỗi: " + error.message);
-                }
+                } catch (error) { alert("Tệp JSON không hợp lệ: " + error.message); }
             };
             reader.readAsText(file);
             importFileInput.value = '';
@@ -1114,36 +1009,9 @@
 
         // --- Event Listeners ---
         function setupEventListeners() {
-            // Listener cho modal thiết lập tên
-            nameSetupBtn.addEventListener('click', async () => {
-                nameSetupBtn.disabled = true;
-                nameSetupBtn.textContent = 'Đang kiểm tra...';
-                
-                const success = await setAndValidateUsername(nameSetupInput.value);
-                if (success) {
-                    nameSetupOverlay.classList.remove('active');
-                }
-
-                nameSetupBtn.disabled = false;
-                nameSetupBtn.textContent = 'Xác nhận';
-            });
-            nameSetupInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    nameSetupBtn.click(); // Giả lập hành động click nút
-                }
-            });
-
-
             dateInput.addEventListener('change', () => calculateAndDisplay(false));
             photosMenuBtn.addEventListener('click', () => { imageSwitcherOverlay.classList.add('active'); updateCards(true); });
-            chatMenuBtn.addEventListener('click', () => { 
-                if (!currentUser.name) {
-                    nameSetupOverlay.classList.add('active');
-                } else {
-                    chatModalOverlay.classList.add('active'); 
-                    chatMessages.scrollTop = chatMessages.scrollHeight; 
-                }
-            });
+            chatMenuBtn.addEventListener('click', () => { chatModalOverlay.classList.add('active'); chatMessages.scrollTop = chatMessages.scrollHeight; });
             toolsMenuBtn.addEventListener('click', () => { settingsModalOverlay.classList.add('active'); updateActiveThumbnail(localStorage.getItem('loveAppBg') || userImages[0]); });
             
             chatBackBtn.addEventListener('click', () => { chatModalOverlay.classList.remove('active'); emojiPickerContainer.style.display = 'none'; });
@@ -1166,23 +1034,25 @@
                 navigator.clipboard.writeText(mainUrl).then(() => {
                     const feedback = document.getElementById('copy-feedback');
                     feedback.style.opacity = '1';
-             
                     setTimeout(() => { feedback.style.opacity = '0'; }, 2000);
                 }).catch(() => alert('Không thể sao chép liên kết!'));
             });
+
             sendMessageBtn.addEventListener('click', sendMessage);
             chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
-            nameInput.addEventListener('change', () => setAndValidateUsername(nameInput.value)); // Đổi tên trong phòng chat
+            nameInput.addEventListener('change', () => updateUsername(nameInput.value));
+            
             exportDataBtn.addEventListener('click', exportData);
             importDataBtn.addEventListener('click', () => importFileInput.click());
             importFileInput.addEventListener('change', importData);
+            
             cardContainer.addEventListener('mousedown', onDragStart);
             cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
             window.addEventListener('mousemove', onDragMove);
             window.addEventListener('touchmove', onDragMove, { passive: false });
             window.addEventListener('mouseup', onDragEnd);
             window.addEventListener('touchend', onDragEnd);
-            // Emoji Picker Events
+            
             emojiBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 emojiPickerContainer.style.display = emojiPickerContainer.style.display === 'block' ? 'none' : 'block';
@@ -1206,7 +1076,6 @@
                 thumb.dataset.url = url;
                 thumb.style.backgroundImage = `url(${url})`;
                 thumb.addEventListener('click', () => { changeBackground(url); });
-    
                 thumbnailContainer.appendChild(thumb);
             });
         }
@@ -1218,7 +1087,6 @@
                 card.dataset.index = index;
                 card.style.backgroundImage = `url(${url})`;
                 cardContainer.appendChild(card);
-        
             });
         }
         function updateCards(isInstant = false) { const cards = document.querySelectorAll('.switcher-card');
