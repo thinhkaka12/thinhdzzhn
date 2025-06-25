@@ -415,10 +415,24 @@
             line-height: 1.4;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            align-self: flex-start;
+            align-self: flex-start; /* Tin nhắn người khác mặc định bên trái */
             border-bottom-left-radius: 4px;
             display: flex;
             flex-direction: column;
+        }
+
+        .message.sent {
+            align-self: flex-end; /* Tin nhắn của mình thì qua bên phải */
+            background: var(--primary-color);
+            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 18px; /* Reset bo góc trái dưới */
+        }
+
+        .message-timestamp {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            align-self: flex-end; /* Luôn hiển thị thời gian ở cuối bong bóng chat */
         }
 
         .message-sender {
@@ -428,6 +442,10 @@
             margin-bottom: 5px;
             display: flex;
             align-items: center;
+        }
+        
+        .message.sent .message-sender {
+             color: rgba(255, 255, 255, 0.85); /* Đổi màu tên cho dễ đọc trên nền xanh */
         }
 
         .admin-badge {
@@ -665,8 +683,7 @@
         const counterLabel = document.getElementById('counter-label');
         const totalDaysVal = document.getElementById('total-days-val');
         const yearsVal = document.getElementById('years-val');
-        const 
-        monthsVal = document.getElementById('months-val');
+        const monthsVal = document.getElementById('months-val');
         const daysVal = document.getElementById('days-val');
         const backgroundMusic = document.getElementById('background-music');
         backgroundMusic.volume = 1.0; // <-- ĐẶT ÂM LƯỢNG TỐI ĐA
@@ -868,8 +885,13 @@
         async function renderMessage(key, msg) {
             const messageEl = document.createElement('div');
             messageEl.className = 'message';
-            messageEl.dataset.key = key; // Lưu key của tin nhắn
-            messageEl.dataset.uid = msg.uid;   // Lưu uid của người gửi
+            messageEl.dataset.key = key;
+            messageEl.dataset.uid = msg.uid;
+
+            // Nếu tin nhắn là của người dùng hiện tại, thêm class 'sent'
+            if (msg.uid === currentUser.uid) {
+                messageEl.classList.add('sent');
+            }
 
             const senderEl = document.createElement('div');
             senderEl.className = 'message-sender';
@@ -889,8 +911,17 @@
             textEl.className = 'message-text';
             textEl.textContent = msg.text;
 
+            // Tạo và thêm thời gian gửi
+            const timestampEl = document.createElement('div');
+            timestampEl.className = 'message-timestamp';
+            const date = new Date(msg.timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            timestampEl.textContent = `${hours}:${minutes}`;
+
             messageEl.appendChild(senderEl);
             messageEl.appendChild(textEl);
+            messageEl.appendChild(timestampEl);
 
             // Thêm các nút điều khiển của admin
             if (currentUser.role === 'admin' && msg.uid !== currentUser.uid) {
@@ -912,7 +943,6 @@
                 controls.appendChild(banBtn);
                 messageEl.appendChild(controls);
             }
-
 
             chatMessages.appendChild(messageEl);
             chatMessages.scrollTop = chatMessages.scrollHeight;
