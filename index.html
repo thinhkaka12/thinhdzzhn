@@ -243,11 +243,16 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background-color 0.2s, opacity 0.2s;
         }
 
         .name-setup-modal button:hover {
             filter: brightness(1.1);
+        }
+
+        .name-setup-modal button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
 
@@ -842,27 +847,32 @@
                 return false;
             }
 
-            // Kiểm tra tên trùng lặp
-            const usersRef = database.ref('users');
-            const snapshot = await usersRef.orderByChild('name').equalTo(name).once('value');
-            if (snapshot.exists()) {
-                 // Cho phép nếu tên trùng là của chính mình (đang đổi chữ hoa/thường)
-                 const existingUID = Object.keys(snapshot.val())[0];
-                 if (existingUID !== currentUser.uid) {
-                    alert('Tên này đã có người sử dụng. Vui lòng chọn tên khác.');
-                    return false;
-                 }
+            try {
+                // Kiểm tra tên trùng lặp
+                const usersRef = database.ref('users');
+                const snapshot = await usersRef.orderByChild('name').equalTo(name).once('value');
+                if (snapshot.exists()) {
+                    const existingUID = Object.keys(snapshot.val())[0];
+                    if (existingUID !== currentUser.uid) {
+                        alert('Tên này đã có người sử dụng. Vui lòng chọn tên khác.');
+                        return false;
+                    }
+                }
+
+                // Cập nhật tên mới
+                currentUser.name = name;
+                localStorage.setItem('commenterName', name);
+                await checkUserRole(currentUser.uid, name);
+
+                // Cập nhật lại tên trong ô input của phòng chat
+                nameInput.value = name;
+
+                return true;
+            } catch (error) {
+                console.error("Lỗi khi xác thực tên người dùng:", error);
+                alert("Đã xảy ra lỗi khi kết nối tới máy chủ. Vui lòng thử lại.");
+                return false;
             }
-            
-            // Cập nhật tên mới
-            currentUser.name = name;
-            localStorage.setItem('commenterName', name);
-            await checkUserRole(currentUser.uid, name);
-            
-            // Cập nhật lại tên trong ô input của phòng chat
-            nameInput.value = name;
-            
-            return true;
         }
 
 
@@ -1106,17 +1116,20 @@
         function setupEventListeners() {
             // Listener cho modal thiết lập tên
             nameSetupBtn.addEventListener('click', async () => {
+                nameSetupBtn.disabled = true;
+                nameSetupBtn.textContent = 'Đang kiểm tra...';
+                
                 const success = await setAndValidateUsername(nameSetupInput.value);
                 if (success) {
                     nameSetupOverlay.classList.remove('active');
                 }
+
+                nameSetupBtn.disabled = false;
+                nameSetupBtn.textContent = 'Xác nhận';
             });
-             nameSetupInput.addEventListener('keypress', async (e) => {
+            nameSetupInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    const success = await setAndValidateUsername(nameSetupInput.value);
-                    if (success) {
-                        nameSetupOverlay.classList.remove('active');
-                    }
+                    nameSetupBtn.click(); // Giả lập hành động click nút
                 }
             });
 
