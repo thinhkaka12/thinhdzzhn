@@ -11,13 +11,19 @@
         @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
         :root {
             --text-color: #ffffff;
-            --primary-color: #007AFF; /* Màu xanh dương chính */
-            --sent-message-color: #34C759; /* <-- THÊM MÀU XANH LÁ MỚI */
+            --primary-color: #007AFF; 
+            /* --- Bổ sung màu sắc cho giao diện iMessage --- */
+            --imessage-user-light: #64d2ff;  /* Màu user - nhạt */
+            --imessage-user-dark: #007aff;   /* Màu user - đậm */
+            --imessage-admin-light: #0af;     /* Màu admin - nhạt & rực rỡ hơn */
+            --imessage-admin-dark: #0062cc;  /* Màu admin - đậm hơn */
+
+            --received-message-color: #2c2c2e; 
             --card-background: rgba(40, 40, 40, 0.7);
             --border-color: rgba(255, 255, 255, 0.2);
             --border-radius: 20px;
             --font-family: 'SF Pro Display', 'Quicksand', sans-serif;
-            --admin-color: #ff9500; /* Màu cam cho tên admin */
+            --admin-name-color: #ff9500; 
         }
 
         body {
@@ -409,26 +415,33 @@
             gap: 12px;
         }
 
+        /* --- CSS MỚI CHO GIAO DIỆN IMESSAGE --- */
         .message {
             max-width: 80%;
             padding: 10px 15px;
             border-radius: 18px;
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.4;
-            background: rgba(255, 255, 255, 0.1);
             color: white;
             align-self: flex-start;
-            border-bottom-left-radius: 4px;
             display: flex;
             flex-direction: column;
             position: relative;
+            background: var(--received-message-color); /* Màu tin nhắn nhận được */
+            border-bottom-left-radius: 4px;
         }
 
         .message.sent {
             align-self: flex-end;
-            background: var(--sent-message-color); /* <-- THAY ĐỔI MÀU TIN NHẮN GỬI ĐI */
+            background-image: linear-gradient(to bottom, var(--imessage-user-light), var(--imessage-user-dark)); /* MÀU MỚI CHO USER */
             border-bottom-right-radius: 4px;
             border-bottom-left-radius: 18px;
+        }
+        
+        /* TIN NHẮN CỦA ADMIN SẼ CÓ MÀU ĐẬM VÀ HIỆU ỨNG NỔI BẬT HƠN */
+        .message.sent.admin-message {
+             background-image: linear-gradient(to bottom, var(--imessage-admin-light), var(--imessage-admin-dark));
+             box-shadow: 0 0 20px rgba(10, 170, 255, 0.5); /* Vầng sáng xanh mạnh hơn */
         }
 
         .message-timestamp {
@@ -437,23 +450,27 @@
             margin-top: 5px;
             align-self: flex-end;
         }
+        
+        .message.sent .message-timestamp {
+            color: rgba(255, 255, 255, 0.8);
+        }
 
         .message-sender {
-            font-weight: 700;
+            font-weight: 600;
             font-size: 14px;
-            color: var(--primary-color);
+            color: rgba(235, 235, 245, 0.6);
             margin-bottom: 5px;
             display: flex;
             align-items: center;
         }
         
         .message.sent .message-sender {
-             color: rgba(255, 255, 255, 0.85);
+             color: rgba(255, 255, 255, 0.9);
         }
 
         .message-sender.admin {
-            color: var(--admin-color);
-            text-shadow: 0 0 5px var(--admin-color);
+            color: var(--admin-name-color);
+            text-shadow: 0 0 5px var(--admin-name-color);
         }
 
         .admin-badge {
@@ -927,16 +944,21 @@
             messageEl.className = 'message';
             messageEl.dataset.key = key;
             messageEl.dataset.uid = msg.uid;
-            if (msg.uid === currentUser.uid) {
-                messageEl.classList.add('sent');
-            }
-
-            const senderEl = document.createElement('div');
-            senderEl.className = 'message-sender';
             
             const userSnapshot = await database.ref(`users/${msg.uid}`).once('value');
             const userData = userSnapshot.val() || { role: 'user', isBanned: false };
             messageEl.dataset.isBanned = userData.isBanned;
+
+            if (msg.uid === currentUser.uid) {
+                messageEl.classList.add('sent');
+            }
+            // Thêm class 'admin-message' cho BẤT KỲ tin nhắn nào của admin
+            if (userData.role === 'admin') {
+                messageEl.classList.add('admin-message');
+            }
+
+            const senderEl = document.createElement('div');
+            senderEl.className = 'message-sender';
             
             if (userData.role === 'admin') {
                 senderEl.classList.add('admin');
@@ -977,7 +999,7 @@
             longPressTimer = setTimeout(() => {
                 activeMessageData = { key, uid, isBanned };
                 showActionModal();
-            }, 500); // 500ms for long press
+            }, 500);
         }
 
         function handlePressEnd() {
