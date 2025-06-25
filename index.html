@@ -9,20 +9,20 @@
     <style>
         /* Font chữ giống iOS */
         @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
-:root {
+        :root {
             --text-color: #ffffff;
             --primary-color: #007AFF;
-/* Màu xanh iOS */
+            /* Màu xanh iOS */
             --card-background: rgba(255, 255, 255, 0.1);
---border-color: rgba(255, 255, 255, 0.2);
+            --border-color: rgba(255, 255, 255, 0.2);
             --border-radius: 20px;
             --font-family: 'SF Pro Display', 'Quicksand', sans-serif;
             --admin-color: #ff9500; /* Màu cam cho admin */
-}
+        }
 
         body {
             font-family: var(--font-family);
-color: var(--text-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -32,137 +32,135 @@ color: var(--text-color);
             overflow: hidden;
             position: relative;
             background-size: cover;
-background-position: center;
+            background-position: center;
             transition: background-image 1s ease-in-out;
             background-color: #000;
         }
 
         body::before {
             content: '';
-position: absolute;
+            position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(12px) saturate(150%);
             z-index: -1;
-}
+        }
 
         .container {
             width: 100%;
-max-width: 360px;
+            max-width: 360px;
             padding: 30px;
             background: var(--card-background);
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-text-align: center;
+            text-align: center;
             z-index: 2;
             animation: slideIn 0.6s ease-out;
         }
 
         @keyframes slideIn {
-            from { transform: translateY(50px);
-opacity: 0; }
-            to { transform: translateY(0); opacity: 1;
-}
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         h1 {
             font-size: 26px;
-font-weight: 600;
+            font-weight: 600;
             margin: 0 0 25px;
             letter-spacing: 0.5px;
         }
 
         .date-input-container label {
             display: block;
-margin-bottom: 10px;
+            margin-bottom: 10px;
             font-size: 15px;
             color: rgba(255, 255, 255, 0.8);
         }
 
         #date-input {
             width: calc(100% - 20px);
-padding: 10px;
+            padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background-color: rgba(0, 0, 0, 0.3);
             color: var(--text-color);
             font-family: inherit;
             font-size: 16px;
-text-align: center;
+            text-align: center;
             cursor: pointer;
         }
 
         #date-input::-webkit-calendar-picker-indicator {
             filter: invert(0.8);
-}
+        }
 
         .counter-stack {
             background: rgba(0, 0, 0, 0.2);
-border-radius: 12px;
+            border-radius: 12px;
             padding: 15px;
             border: 1px solid var(--border-color);
             margin-top: 15px;
-}
+        }
 
         .counter-line .label {
             font-size: 15px;
-color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 5px;
         }
 
         .counter-line .value {
             font-size: 42px;
-font-weight: 700;
+            font-weight: 700;
             line-height: 1.1;
         }
 
         .counter-line .value .unit {
             font-size: 18px;
-font-weight: 500;
+            font-weight: 500;
             margin-left: 8px;
             color: var(--primary-color);
         }
         
         .detailed-counter {
             display: flex;
-justify-content: space-around;
+            justify-content: space-around;
             margin-top: 20px;
             padding-top: 15px;
             border-top: 1px solid var(--border-color);
-}
+        }
 
         .counter-item {
             display: flex;
-flex-direction: column;
+            flex-direction: column;
             align-items: center;
         }
 
         .counter-item .value {
             font-size: 32px;
-font-weight: 600;
+            font-weight: 600;
             line-height: 1.1;
             color: var(--text-color);
         }
 
         .counter-item .label {
             font-size: 14px;
-color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.7);
             margin-top: 4px;
         }
         
         .fixed-controls {
             position: fixed;
-top: 15px;
+            top: 15px;
             right: 15px;
             z-index: 10;
             display: flex;
             gap: 10px;
-}
+        }
 
         .control-btn {
             width: 40px;
-height: 40px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.15);
             border: none;
             border-radius: 12px;
@@ -170,160 +168,158 @@ height: 40px;
             justify-content: center;
             align-items: center;
             font-size: 18px;
-cursor: pointer;
+            cursor: pointer;
             transition: background 0.3s, transform 0.2s;
         }
 
         .control-btn:hover {
             background: rgba(255, 255, 255, 0.25);
-transform: scale(1.05);
+            transform: scale(1.05);
         }
 
         .overlay {
             position: fixed;
-inset: 0;
+            inset: 0;
             z-index: 20;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(15px);
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
-}
+        }
 
         .overlay.active {
             display: flex;
-opacity: 1;
+            opacity: 1;
         }
 
         #image-switcher-overlay {
             justify-content: center;
-align-items: center;
+            align-items: center;
         }
 
         .card-container {
             position: relative;
-width: 100%;
+            width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             perspective: 1200px;
-}
+        }
 
         .switcher-card {
             position: absolute;
-width: clamp(260px, 65vw, 300px);
+            width: clamp(260px, 65vw, 300px);
             height: clamp(380px, 65vh, 460px);
             background-size: cover;
             background-position: center;
             border: 1px solid rgba(255, 255, 255, 0.15);
-border-radius: 20px;
+            border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             cursor: grab;
             transition: transform 0.4s ease, opacity 0.4s ease;
-}
+        }
 
         .switcher-card.is-dragging {
             transition: none;
-cursor: grabbing;
+            cursor: grabbing;
         }
 
         .switcher-card.is-exiting {
             transform: translateY(-100vh) rotate(10deg) !important;
-opacity: 0 !important;
+            opacity: 0 !important;
         }
 
         .switcher-hint {
             position: absolute;
-bottom: 20px;
+            bottom: 20px;
             color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
         }
 
         #settings-modal-overlay {
             justify-content: center;
-align-items: flex-end;
+            align-items: flex-end;
         }
         
         #chat-modal-overlay {
             justify-content: flex-start;
-align-items: flex-start;
+            align-items: flex-start;
         }
 
         .modal-content {
             width: 100%;
-max-width: 360px;
+            max-width: 360px;
             background: rgba(30, 30, 30, 0.9);
             border-radius: 20px 20px 0 0;
             padding: 20px;
             box-sizing: border-box;
             color: white;
-animation: slideUp 0.3s ease;
+            animation: slideUp 0.3s ease;
             max-height: 80vh;
             overflow-y: auto;
         }
         
         #chat-modal-overlay.active .modal-content {
             max-width: 100%;
-height: 100vh;
+            height: 100vh;
             max-height: 100vh;
             border-radius: 0;
             background: #000;
             padding: 0;
             display: flex;
             flex-direction: column;
-}
+        }
 
         @keyframes slideUp {
-            from { transform: translateY(100%);
-}
-            to { transform: translateY(0);
-}
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
         .modal-content h2 {
             margin: 0 0 15px;
-font-size: 22px;
+            font-size: 22px;
             font-weight: 600;
         }
 
         .theme-thumbnails {
             display: grid;
-grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
         }
 
         .thumbnail {
             width: 100%;
-padding-bottom: 100%;
+            padding-bottom: 100%;
             background-size: cover;
             background-position: center;
             border-radius: 10px;
             cursor: pointer;
             border: 2px solid transparent;
             transition: border-color 0.2s, transform 0.2s;
-}
+        }
 
         .thumbnail:hover {
             transform: scale(1.03);
-}
+        }
 
         .thumbnail.active {
             border-color: var(--primary-color);
-}
+        }
 
         .tool-section {
             margin-bottom: 15px;
-}
+        }
 
         .tool-section p {
             margin: 0 0 8px 0;
-font-size: 16px;
+            font-size: 16px;
         }
 
         .tool-section button {
             width: 100%;
-padding: 12px;
+            padding: 12px;
             font-family: inherit;
             font-size: 16px;
             border: none;
@@ -331,48 +327,48 @@ padding: 12px;
             color: white;
             border-radius: 10px;
             cursor: pointer;
-transition: background 0.2s;
+            transition: background 0.2s;
             margin-top: 5px;
         }
 
         .tool-section button:hover {
             background: rgba(255, 255, 255, 0.2);
-}
+        }
 
         #copy-feedback {
             text-align: center;
-margin-top: 10px;
+            margin-top: 10px;
             opacity: 0;
             transition: opacity 0.3s;
             color: var(--primary-color);
             font-size: 14px;
-}
+        }
 
         /* --- CHAT STYLES --- */
         
         .chat-header {
             display: flex;
-align-items: center;
+            align-items: center;
             padding: 10px 15px;
             padding-top: calc(10px + env(safe-area-inset-top));
             border-bottom: 1px solid var(--border-color);
             background: rgba(25,25,25,0.8);
             backdrop-filter: blur(10px);
-}
+        }
 
         #chat-back-btn {
             background: none;
-border: none;
+            border: none;
             color: var(--primary-color);
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
             padding: 0 15px 0 0;
-}
+        }
         
         .chat-header h2 {
             margin: 0;
-font-size: 18px;
+            font-size: 18px;
             font-weight: 600;
             flex-grow: 1;
             text-align: center;
@@ -380,40 +376,40 @@ font-size: 18px;
         
         .chat-container {
             display: flex;
-flex-direction: column;
+            flex-direction: column;
             height: 100%;
             position: relative;
         }
 
         .name-input-container {
             padding: 10px;
-border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         #name-input {
             width: 100%;
-box-sizing: border-box;
+            box-sizing: border-box;
             padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background-color: rgba(0, 0, 0, 0.3);
             color: var(--text-color);
             font-family: inherit;
-font-size: 15px;
+            font-size: 15px;
         }
 
         .chat-messages {
             flex: 1;
-overflow-y: auto;
+            overflow-y: auto;
             padding: 15px 10px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-}
+        }
 
         .message {
             max-width: 80%;
-padding: 10px 15px;
+            padding: 10px 15px;
             border-radius: 18px;
             font-size: 15px;
             line-height: 1.4;
@@ -421,22 +417,22 @@ padding: 10px 15px;
             color: white;
             align-self: flex-start;
             border-bottom-left-radius: 4px;
-display: flex;
+            display: flex;
             flex-direction: column;
         }
 
         .message-sender {
             font-weight: 700;
-font-size: 14px;
+            font-size: 14px;
             color: var(--primary-color);
             margin-bottom: 5px;
             display: flex;
             align-items: center;
-}
+        }
 
         .admin-badge {
             background-color: var(--admin-color); /* Sử dụng màu admin */
-color: white;
+            color: white;
             width: 15px;
             height: 15px;
             border-radius: 50%;
@@ -446,7 +442,7 @@ color: white;
             margin-left: 6px;
             font-size: 10px;
             font-weight: bold;
-}
+        }
         
         /* CSS cho tên admin nổi bật */
         .message-sender.admin {
@@ -477,36 +473,36 @@ color: white;
 
         .chat-input-container {
             display: flex;
-align-items: center;
+            align-items: center;
             padding: 10px;
             background: rgba(25,25,25,0.8);
             border-top: 1px solid var(--border-color);
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
-}
+        }
 
         #chat-input {
             flex: 1;
-padding: 10px;
+            padding: 10px;
             border: none;
             background: rgba(255,255,255,0.1);
             color: white;
             font-size: 16px;
             outline: none;
             border-radius: 18px;
-}
+        }
 
         #emoji-btn {
             background: none;
-border: none;
+            border: none;
             color: white;
             font-size: 24px;
             cursor: pointer;
             padding: 0 10px;
-}
+        }
 
         #send-message-btn {
             background: var(--primary-color);
-color: white;
+            color: white;
             border: none;
             border-radius: 50%;
             width: 36px;
@@ -516,25 +512,25 @@ color: white;
             align-items: center;
             cursor: pointer;
             flex-shrink: 0;
-margin-left: 8px;
+            margin-left: 8px;
         }
         
         .emoji-picker-container {
             position: absolute;
-bottom: calc(60px + env(safe-area-inset-bottom));
+            bottom: calc(60px + env(safe-area-inset-bottom));
             left: 0;
             right: 0;
             z-index: 100;
             display: none;
-}
+        }
         emoji-picker {
             width: 100%;
-}
+        }
 
         @media (max-width: 400px) {
             .container {
                  max-width: 90vw;
-}
+            }
         }
     </style>
 </head>
@@ -550,8 +546,7 @@ bottom: calc(60px + env(safe-area-inset-bottom));
     <div class="container">
         <h1 id="main-title">Hành Trình Yêu Thương</h1>
         <div class="date-input-container">
-            <label id="date-label" for="date-input">Ngày bắt 
-đầu kỷ niệm</label>
+            <label id="date-label" for="date-input">Ngày bắt đầu kỷ niệm</label>
             <input type="date" id="date-input" value="2025-01-20">
         </div>
         <div class="counter-stack">
@@ -560,21 +555,19 @@ bottom: calc(60px + env(safe-area-inset-bottom));
                 <span class="value" id="total-days-val">0<span class="unit">ngày</span></span>
             </div>
   
-
            <div class="detailed-counter">
                 <div class="counter-item">
                     <span class="value" id="years-val">0</span>
                     <span class="label">Năm</span>
                 </div>
             
- 
                 <div class="counter-item">
                     <span class="value" id="months-val">0</span>
                     <span class="label">Tháng</span>
                 </div>
                 <div class="counter-item">
       
-              <span class="value" id="days-val">0</span>
+                    <span class="value" id="days-val">0</span>
                     <span class="label">Ngày</span>
                 </div>
             </div>
@@ -584,7 +577,7 @@ bottom: calc(60px + env(safe-area-inset-bottom));
     <div id="image-switcher-overlay" class="overlay">
         <div id="card-container" class="card-container"></div>
        
- <p class="switcher-hint">Vuốt lên để đóng</p>
+         <p class="switcher-hint">Vuốt lên để đóng</p>
     </div>
 
     <div id="settings-modal-overlay" class="overlay">
@@ -595,7 +588,7 @@ bottom: calc(60px + env(safe-area-inset-bottom));
                 <div class="theme-thumbnails"></div>
             </div>
  
-           <div class="tool-section">
+            <div class="tool-section">
   
                <p>Âm nhạc:</p>
                 <button id="music-toggle-btn">Bật nhạc</button>
@@ -603,14 +596,13 @@ bottom: calc(60px + env(safe-area-inset-bottom));
             <div class="tool-section">
                 <p>Chia sẻ:</p>
           
-      <button id="copy-link-btn">Sao chép liên kết</button>
+                <button id="copy-link-btn">Sao chép liên kết</button>
      
                 <p id="copy-feedback">Đã sao chép!</p>
             </div>
             <div class="tool-section">
                 <p>Quản lý dữ liệu bình luận:</p>
-                <button id="export-data-btn">Xuất dữ liệu 
-(JSON)</button>
+                <button id="export-data-btn">Xuất dữ liệu (JSON)</button>
                 <button id="import-data-btn">Nhập dữ liệu (JSON)</button>
                 <input type="file" id="import-file-input" accept=".json" style="display: none;">
             </div>
@@ -621,27 +613,25 @@ bottom: calc(60px + env(safe-area-inset-bottom));
         <div class="modal-content">
             <div class="chat-container">
        
-         <div class="chat-header">
+                 <div class="chat-header">
                     <button id="chat-back-btn">&lt;</button>
                     <h2>Trò chuyện</h2>
                     <div style="width: 40px;"></div>
                 </div>
 
           
-      <div class="name-input-container">
+                <div class="name-input-container">
                     <input type="text" id="name-input" placeholder="Nhập tên của bạn...">
                 </div>
                 <div class="chat-messages" id="chat-messages"></div>
                 
-                <div 
-class="emoji-picker-container">
+                <div class="emoji-picker-container">
                     <emoji-picker class="light"></emoji-picker>
                 </div>
 
                 <div class="chat-input-container">
                     <button id="emoji-btn">😊</button>
-                    <input type="text" id="chat-input" placeholder="Viết tin 
-nhắn...">
+                    <input type="text" id="chat-input" placeholder="Viết tin nhắn...">
                     <button id="send-message-btn">➤</button>
                 </div>
             </div>
@@ -655,7 +645,7 @@ nhắn...">
     // --- Firebase Configuration ---
     const firebaseConfig = {
       
-  apiKey: "AIzaSyC-f-Cz5Clf70OPy6FLWxHHyxh30EMGRBg",
+        apiKey: "AIzaSyC-f-Cz5Clf70OPy6FLWxHHyxh30EMGRBg",
         authDomain: "daylove-6a8e5.firebaseapp.com",
         databaseURL: "https://daylove-6a8e5-default-rtdb.firebaseio.com",
         projectId: "daylove-6a8e5",
@@ -663,10 +653,10 @@ nhắn...">
         messagingSenderId: "393383864030",
         appId: "1:393383864030:web:1a7a9574a64151adac044f"
     };
-// Initialize Firebase
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         // --- DOM Elements ---
         const body = document.body;
         const dateInput = document.getElementById('date-input');
@@ -676,29 +666,30 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalDaysVal = document.getElementById('total-days-val');
         const yearsVal = document.getElementById('years-val');
         const 
-monthsVal = document.getElementById('months-val');
+        monthsVal = document.getElementById('months-val');
         const daysVal = document.getElementById('days-val');
         const backgroundMusic = document.getElementById('background-music');
+        backgroundMusic.volume = 1.0; // <-- ĐẶT ÂM LƯỢNG TỐI ĐA
         const photosMenuBtn = document.getElementById('photos-menu-btn');
         const chatMenuBtn = document.getElementById('chat-menu-btn');
         const toolsMenuBtn = document.getElementById('tools-menu-btn');
         const imageSwitcherOverlay = document.getElementById('image-switcher-overlay');
-const cardContainer = document.getElementById('card-container');
+        const cardContainer = document.getElementById('card-container');
         const settingsModalOverlay = document.getElementById('settings-modal-overlay');
         const chatModalOverlay = document.getElementById('chat-modal-overlay');
         const thumbnailContainer = document.querySelector('.theme-thumbnails');
         const musicToggleBtn = document.getElementById('music-toggle-btn');
-const nameInput = document.getElementById('name-input');
+        const nameInput = document.getElementById('name-input');
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const sendMessageBtn = document.getElementById('send-message-btn');
         const exportDataBtn = document.getElementById('export-data-btn');
-const importDataBtn = document.getElementById('import-data-btn');
+        const importDataBtn = document.getElementById('import-data-btn');
         const importFileInput = document.getElementById('import-file-input');
         const emojiBtn = document.getElementById('emoji-btn');
         const emojiPickerContainer = document.querySelector('.emoji-picker-container');
         const chatBackBtn = document.getElementById('chat-back-btn');
-// --- Configuration ---
+        // --- Configuration ---
         const userImages = [
             'https://files.catbox.moe/j61spo.jpeg', 'https://files.catbox.moe/rkchx4.jpeg',
             'https://files.catbox.moe/g3wnnp.jpeg', 'https://files.catbox.moe/0fw4np.jpeg',
@@ -707,15 +698,15 @@ const importDataBtn = document.getElementById('import-data-btn');
             'https://files.catbox.moe/sndn1d.jpeg',
             'https://files.catbox.moe/koy1p2.jpeg'
         ];
-let currentCardIndex = 0, isDragging = false;
+        let currentCardIndex = 0, isDragging = false;
         let startX, startY, deltaX, deltaY;
         
         const chatRoomId = 'public_comments_section';
         let currentUser = { uid: null, name: null, role: 'user' };
-// --- Initialize ---
+        // --- Initialize ---
         function initialize() {
             loadUserSettings();
-createImageSwitcherCards();
+            createImageSwitcherCards();
             createSettingsThumbnails();
             calculateAndDisplay(true);
             setupEventListeners();
@@ -724,7 +715,7 @@ createImageSwitcherCards();
 
         async function loadUserSettings() {
             const savedBg = localStorage.getItem('loveAppBg');
-const initialBg = savedBg || userImages[0];
+            const initialBg = savedBg || userImages[0];
             changeBackground(initialBg, true);
 
             let savedUID = localStorage.getItem('userUID');
@@ -735,11 +726,11 @@ const initialBg = savedBg || userImages[0];
             currentUser.uid = savedUID;
 
             const savedName = localStorage.getItem('commenterName');
-if (savedName) {
+            if (savedName) {
                 nameInput.value = savedName;
                 currentUser.name = savedName;
                 await checkUserRole(savedUID, savedName);
-}
+            }
         }
 
         async function checkUserRole(uid, name) {
@@ -756,58 +747,58 @@ if (savedName) {
         }
         function changeBackground(imageUrl, isInitialLoad = false) {
             const img = new Image();
-img.src = imageUrl;
+            img.src = imageUrl;
             img.onload = () => { body.style.backgroundImage = `url(${imageUrl})`; };
-if (!isInitialLoad) {
+            if (!isInitialLoad) {
                 localStorage.setItem('loveAppBg', imageUrl);
-}
+            }
             updateActiveThumbnail(imageUrl);
-}
+        }
         
         function updateActiveThumbnail(activeUrl) {
              document.querySelectorAll('.thumbnail').forEach(thumb => {
                 thumb.classList.toggle('active', thumb.dataset.url === activeUrl);
             });
-}
+        }
         
         // --- Counter Logic ---
         function calculateAndDisplay(isInitialLoad = false) {
             const startDate = new Date(dateInput.value);
-if (isNaN(startDate.getTime())) return;
+            if (isNaN(startDate.getTime())) return;
             const today = new Date();
             const isFuture = today < startDate;
             mainTitle.textContent = isFuture ?
-'Đếm Ngược Sự Kiện' : 'Hành Trình Yêu Thương';
+            'Đếm Ngược Sự Kiện' : 'Hành Trình Yêu Thương';
             dateLabel.textContent = isFuture ?
-'Ngày diễn ra sự kiện' : 'Ngày bắt đầu kỷ niệm';
+            'Ngày diễn ra sự kiện' : 'Ngày bắt đầu kỷ niệm';
             counterLabel.textContent = isFuture ?
-'Còn lại' : 'Đã bên nhau';
+            'Còn lại' : 'Đã bên nhau';
             const start = isFuture ? today : startDate;
             const end = isFuture ?
-startDate : today;
+            startDate : today;
             const diffTime = Math.abs(end - start);
             const totalDiffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-let tempStartDate = new Date(start);
+            let tempStartDate = new Date(start);
             let years = end.getFullYear() - tempStartDate.getFullYear();
             let months = end.getMonth() - tempStartDate.getMonth();
-let days = end.getDate() - tempStartDate.getDate();
+            let days = end.getDate() - tempStartDate.getDate();
             if (days < 0) {
                 months--;
-const lastMonthOfEnd = new Date(end.getFullYear(), end.getMonth(), 0);
+                const lastMonthOfEnd = new Date(end.getFullYear(), end.getMonth(), 0);
                 days += lastMonthOfEnd.getDate();
-}
+            }
             if (months < 0) {
                 years--;
-months += 12;
+                months += 12;
             }
             if (isInitialLoad) {
                 animateValue(totalDaysVal, 0, totalDiffDays, 1200, '<span class="unit"> ngày</span>');
-animateValue(yearsVal, 0, years, 1200);
+                animateValue(yearsVal, 0, years, 1200);
                 animateValue(monthsVal, 0, months, 1200);
                 animateValue(daysVal, 0, days, 1200);
-} else {
+            } else {
                 totalDaysVal.innerHTML = totalDiffDays.toLocaleString('vi-VN') + '<span class="unit"> ngày</span>';
-yearsVal.textContent = years.toLocaleString('vi-VN');
+                yearsVal.textContent = years.toLocaleString('vi-VN');
                 monthsVal.textContent = months.toLocaleString('vi-VN');
                 daysVal.textContent = days.toLocaleString('vi-VN');
             }
@@ -815,15 +806,15 @@ yearsVal.textContent = years.toLocaleString('vi-VN');
 
         function animateValue(element, start, end, duration, suffix = '') {
             let startTimestamp = null;
-const step = (timestamp) => {
+            const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
-const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 const currentValue = Math.floor(progress * (end - start) + start);
-element.innerHTML = currentValue.toLocaleString('vi-VN') + suffix;
+                element.innerHTML = currentValue.toLocaleString('vi-VN') + suffix;
                 if (progress < 1) window.requestAnimationFrame(step);
             };
             window.requestAnimationFrame(step);
-}
+        }
 
         // --- Comment Section Logic ---
         async function handleNameInput() {
@@ -862,7 +853,7 @@ element.innerHTML = currentValue.toLocaleString('vi-VN') + suffix;
             }
 
             const text = chatInput.value.trim();
-if (!text) return;
+            if (!text) return;
 
             const message = {
                 uid: currentUser.uid,
@@ -872,11 +863,11 @@ if (!text) return;
             };
             database.ref(`comments/${chatRoomId}`).push(message);
             chatInput.value = '';
-}
+        }
 
         async function renderMessage(key, msg) {
             const messageEl = document.createElement('div');
-messageEl.className = 'message';
+            messageEl.className = 'message';
             messageEl.dataset.key = key; // Lưu key của tin nhắn
             messageEl.dataset.uid = msg.uid;   // Lưu uid của người gửi
 
@@ -887,16 +878,16 @@ messageEl.className = 'message';
             const userData = userSnapshot.val();
             const isUserAdmin = userData && userData.role === 'admin';
             
-if (isUserAdmin) {
+            if (isUserAdmin) {
                 senderEl.classList.add('admin');
                 senderEl.innerHTML = `${msg.name} <span class="admin-badge">✓</span>`;
-} else {
+            } else {
                 senderEl.textContent = msg.name;
-}
+            }
 
             const textEl = document.createElement('div');
             textEl.className = 'message-text';
-textEl.textContent = msg.text;
+            textEl.textContent = msg.text;
 
             messageEl.appendChild(senderEl);
             messageEl.appendChild(textEl);
@@ -929,7 +920,7 @@ textEl.textContent = msg.text;
         
         function listenForMessages() {
             const commentsRef = database.ref(`comments/${chatRoomId}`);
-chatMessages.innerHTML = '';
+            chatMessages.innerHTML = '';
             commentsRef.on('child_added', snapshot => {
                 const msg = snapshot.val();
                 if(msg) renderMessage(snapshot.key, msg);
@@ -940,7 +931,7 @@ chatMessages.innerHTML = '';
                 const removedEl = chatMessages.querySelector(`[data-key="${snapshot.key}"]`);
                 if (removedEl) removedEl.remove();
             });
-}
+        }
 
         // --- Admin Functions ---
         function deleteMessage(key) {
@@ -964,149 +955,144 @@ chatMessages.innerHTML = '';
         // --- Data Management ---
         function exportData() {
             const commentsRef = database.ref(`comments/${chatRoomId}`);
-commentsRef.once('value').then(snapshot => {
+            commentsRef.once('value').then(snapshot => {
                 const data = snapshot.val();
                 if (!data) { alert("Không có dữ liệu bình luận để xuất!"); return; }
                 const dataStr = JSON.stringify(data, null, 2);
                 const blob = new Blob([dataStr], {type: "application/json"});
         
-
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = 'comments.json';
                 a.click();
           
-      URL.revokeObjectURL(url);
+                URL.revokeObjectURL(url);
   
             }).catch(error => alert("Lỗi khi xuất dữ liệu: " + error.message));
-}
+        }
 
         function importData(event) {
             const file = event.target.files[0];
-if (!file) return;
+            if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-if (confirm("Thao tác này sẽ XÓA TẤT CẢ các bình luận hiện tại và thay thế bằng dữ liệu từ tệp. Bạn có chắc chắn muốn tiếp tục?")) {
+                    if (confirm("Thao tác này sẽ XÓA TẤT CẢ các bình luận hiện tại và thay thế bằng dữ liệu từ tệp. Bạn có chắc chắn muốn tiếp tục?")) {
                         const commentsRef = database.ref(`comments/${chatRoomId}`);
-commentsRef.set(data).then(() => {
+                        commentsRef.set(data).then(() => {
                             alert("Nhập dữ liệu thành công!");
                             listenForMessages();
                         }).catch(error => alert("Lỗi khi ghi dữ liệu: " + error.message));
-}
+                    }
                 } catch (error) { alert("Tệp JSON không hợp lệ hoặc đã bị lỗi: " + error.message);
-}
+                }
             };
             reader.readAsText(file);
             importFileInput.value = '';
-}
+        }
 
         // --- Event Listeners ---
         function setupEventListeners() {
             dateInput.addEventListener('change', () => calculateAndDisplay(false));
-photosMenuBtn.addEventListener('click', () => { imageSwitcherOverlay.classList.add('active'); updateCards(true); });
+            photosMenuBtn.addEventListener('click', () => { imageSwitcherOverlay.classList.add('active'); updateCards(true); });
             chatMenuBtn.addEventListener('click', () => { chatModalOverlay.classList.add('active'); chatMessages.scrollTop = chatMessages.scrollHeight; });
-toolsMenuBtn.addEventListener('click', () => { settingsModalOverlay.classList.add('active'); updateActiveThumbnail(localStorage.getItem('loveAppBg') || userImages[0]); });
+            toolsMenuBtn.addEventListener('click', () => { settingsModalOverlay.classList.add('active'); updateActiveThumbnail(localStorage.getItem('loveAppBg') || userImages[0]); });
             
             chatBackBtn.addEventListener('click', () => { chatModalOverlay.classList.remove('active'); emojiPickerContainer.style.display = 'none'; });
-[imageSwitcherOverlay, settingsModalOverlay, chatModalOverlay].forEach(overlay => {
+            [imageSwitcherOverlay, settingsModalOverlay, chatModalOverlay].forEach(overlay => {
                 overlay.addEventListener('click', e => { 
                     if (e.target === overlay) { 
                         overlay.classList.remove('active'); 
-                        emojiPickerContainer.style.display = 
-'none';
+                        emojiPickerContainer.style.display = 'none';
                     } 
                 });
             });
-musicToggleBtn.addEventListener('click', () => {
+            musicToggleBtn.addEventListener('click', () => {
                 if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.log("Playback prevented.", e)); } 
                 else { backgroundMusic.pause(); }
             });
-backgroundMusic.onplay = () => { musicToggleBtn.textContent = 'Tắt nhạc'; };
+            backgroundMusic.onplay = () => { musicToggleBtn.textContent = 'Tắt nhạc'; };
             backgroundMusic.onpause = () => { musicToggleBtn.textContent = 'Bật nhạc'; };
-document.getElementById('copy-link-btn').addEventListener('click', () => {
+            document.getElementById('copy-link-btn').addEventListener('click', () => {
                 const mainUrl = window.location.origin + window.location.pathname;
                 navigator.clipboard.writeText(mainUrl).then(() => {
                     const feedback = document.getElementById('copy-feedback');
                     feedback.style.opacity = '1';
              
-
-                   setTimeout(() => { feedback.style.opacity = '0'; }, 2000);
+                    setTimeout(() => { feedback.style.opacity = '0'; }, 2000);
                 }).catch(() => alert('Không thể sao chép liên kết!'));
             });
-sendMessageBtn.addEventListener('click', sendMessage);
+            sendMessageBtn.addEventListener('click', sendMessage);
             chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
             nameInput.addEventListener('change', handleNameInput);
             exportDataBtn.addEventListener('click', exportData);
             importDataBtn.addEventListener('click', () => importFileInput.click());
             importFileInput.addEventListener('change', importData);
-cardContainer.addEventListener('mousedown', onDragStart);
+            cardContainer.addEventListener('mousedown', onDragStart);
             cardContainer.addEventListener('touchstart', onDragStart, { passive: false });
             window.addEventListener('mousemove', onDragMove);
             window.addEventListener('touchmove', onDragMove, { passive: false });
             window.addEventListener('mouseup', onDragEnd);
             window.addEventListener('touchend', onDragEnd);
-// Emoji Picker Events
+            // Emoji Picker Events
             emojiBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 emojiPickerContainer.style.display = emojiPickerContainer.style.display === 'block' ? 'none' : 'block';
             });
-document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
+            document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
                 chatInput.value += event.detail.unicode;
             });
-document.addEventListener('click', (e) => {
+            document.addEventListener('click', (e) => {
                 if (!emojiPickerContainer.contains(e.target) && e.target !== emojiBtn) {
                     emojiPickerContainer.style.display = 'none';
                 }
             });
-}
+        }
         
         // --- Functions below are for UI components that don't need frequent changes ---
         function createSettingsThumbnails() {
             thumbnailContainer.innerHTML = '';
-userImages.forEach(url => {
+            userImages.forEach(url => {
                 const thumb = document.createElement('div');
                 thumb.className = 'thumbnail';
                 thumb.dataset.url = url;
                 thumb.style.backgroundImage = `url(${url})`;
                 thumb.addEventListener('click', () => { changeBackground(url); });
     
-
                 thumbnailContainer.appendChild(thumb);
             });
-}
+        }
         function createImageSwitcherCards() {
             cardContainer.innerHTML = '';
-userImages.forEach((url, index) => {
+            userImages.forEach((url, index) => {
                 const card = document.createElement('div');
                 card.className = 'switcher-card';
                 card.dataset.index = index;
                 card.style.backgroundImage = `url(${url})`;
                 cardContainer.appendChild(card);
         
-
             });
-}
+        }
         function updateCards(isInstant = false) { const cards = document.querySelectorAll('.switcher-card');
-cards.forEach((card, i) => { const offset = i - currentCardIndex; const absOffset = Math.abs(offset); const direction = Math.sign(offset); let tx = isDragging ? deltaX : 0; let ty = isDragging ? deltaY : 0; const transform = `translateX(calc(${offset * 60}% + ${tx}px)) scale(${1 - absOffset * 0.1}) rotateY(${direction * -15}deg) translateZ(${-absOffset * 80}px) translateY(${ty}px)`; if (isInstant) card.classList.add('is-dragging'); card.style.transform = transform; card.style.opacity = absOffset > 2 ? '0' : '1'; card.style.zIndex = userImages.length - absOffset; if (isInstant) card.offsetHeight; if (isInstant) card.classList.remove('is-dragging'); });
-}
+        cards.forEach((card, i) => { const offset = i - currentCardIndex; const absOffset = Math.abs(offset); const direction = Math.sign(offset); let tx = isDragging ? deltaX : 0; let ty = isDragging ? deltaY : 0; const transform = `translateX(calc(${offset * 60}% + ${tx}px)) scale(${1 - absOffset * 0.1}) rotateY(${direction * -15}deg) translateZ(${-absOffset * 80}px) translateY(${ty}px)`; if (isInstant) card.classList.add('is-dragging'); card.style.transform = transform; card.style.opacity = absOffset > 2 ? '0' : '1'; card.style.zIndex = userImages.length - absOffset; if (isInstant) card.offsetHeight; if (isInstant) card.classList.remove('is-dragging'); });
+        }
         function onDragStart(e) { if (e.target.closest('button')) return; e.preventDefault(); isDragging = true;
-startX = e.pageX || e.touches[0].pageX; startY = e.pageY || e.touches[0].pageY; deltaX = 0; deltaY = 0; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.add('is-dragging'));
-}
+        startX = e.pageX || e.touches[0].pageX; startY = e.pageY || e.touches[0].pageY; deltaX = 0; deltaY = 0; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.add('is-dragging'));
+        }
         function onDragMove(e) { if (!isDragging) return; const currentX = e.pageX || e.touches[0].pageX;
-const currentY = e.pageY || e.touches[0].pageY; deltaX = currentX - startX; deltaY = currentY - startY; updateCards();
-}
+        const currentY = e.pageY || e.touches[0].pageY; deltaX = currentX - startX; deltaY = currentY - startY; updateCards();
+        }
         function onDragEnd() { if (!isDragging) return; isDragging = false; cardContainer.querySelectorAll('.switcher-card').forEach(c => c.classList.remove('is-dragging'));
-if (deltaY < -100) { const frontCard = document.querySelector(`.switcher-card[data-index="${currentCardIndex}"]`); if (frontCard) frontCard.classList.add('is-exiting'); setTimeout(() => imageSwitcherOverlay.classList.remove('active'), 300);
-setTimeout(() => frontCard && frontCard.classList.remove('is-exiting'), 500); return; } const threshold = window.innerWidth / 4;
-if (deltaX > threshold) { currentCardIndex = Math.max(0, currentCardIndex - 1);
-} else if (deltaX < -threshold) { currentCardIndex = Math.min(userImages.length - 1, currentCardIndex + 1); } deltaX = 0;
-deltaY = 0; updateCards(); }
+        if (deltaY < -100) { const frontCard = document.querySelector(`.switcher-card[data-index="${currentCardIndex}"]`); if (frontCard) frontCard.classList.add('is-exiting'); setTimeout(() => imageSwitcherOverlay.classList.remove('active'), 300);
+        setTimeout(() => frontCard && frontCard.classList.remove('exiting'), 500); return; } const threshold = window.innerWidth / 4;
+        if (deltaX > threshold) { currentCardIndex = Math.max(0, currentCardIndex - 1);
+        } else if (deltaX < -threshold) { currentCardIndex = Math.min(userImages.length - 1, currentCardIndex + 1); } deltaX = 0;
+        deltaY = 0; updateCards(); }
         
         initialize();
-});
+    });
     </script>
 </body>
 </html>
