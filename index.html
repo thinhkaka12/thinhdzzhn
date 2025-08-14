@@ -1,40 +1,52 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Đếm Ngày Yêu Thương</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-    <style>
-        /* Font chữ giống iOS */
-        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
-        :root {
-            --text-color: #ffffff;
-            --primary-color: #007AFF; 
-            /* --- Bổ sung màu sắc cho giao diện iMessage --- */
-            --imessage-blue-light: #64d2ff;
-            --imessage-blue-dark: #007aff;
-            --received-message-color: #2c2c2e; /* Màu tin nhắn nhận được (dark mode) */
-            /* --- Các màu cũ --- */
-            --card-background: rgba(40, 40, 40, 0.7);
-            --border-color: rgba(255, 255, 255, 0.2);
-            --border-radius: 20px;
-            --font-family: 'SF Pro Display', 'Quicksand', sans-serif;
-            --admin-color: #ff9500; /* Màu cam cho tên admin */
-        }
+<meta charset="UTF-8">
+<title>Bật Khiên Avatar Facebook</title>
+<style>
+    body { font-family: Arial; background: #f5f5f5; padding: 20px; }
+    h1 { color: #333; }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; }
+    button { background: #1877f2; color: white; border: none; cursor: pointer; }
+    button:hover { background: #0d5ec2; }
+</style>
+</head>
+<body>
 
-        body {
-            font-family: var(--font-family);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
+<h1>Bật Khiên Avatar Facebook</h1>
+<input type="text" id="token" placeholder="Dán Access Token vào đây">
+<button onclick="enableShield()">Bật Khiên</button>
+<pre id="result"></pre>
+
+<script>
+function enableShield() {
+    const token = document.getElementById("token").value.trim();
+    if (!token) {
+        alert("Vui lòng nhập Access Token!");
+        return;
+    }
+
+    fetch(`https://graph.facebook.com/me/profile_picture?profile_picture_guard=true&access_token=${token}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+        if (data.success) {
+            alert("✅ Bật khiên thành công!");
+        } else {
+            alert("❌ Không bật được khiên. Kiểm tra token.");
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Lỗi kết nối!");
+    });
+}
+</script>
+
+</body>
+</html>            position: relative;
             background-size: cover;
             background-position: center;
             transition: background-image 1s ease-in-out;
